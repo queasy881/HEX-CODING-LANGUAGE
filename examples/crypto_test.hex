@@ -1,0 +1,46 @@
+## Test custom HEX cipher encoding
+
+>> "=== HEX CIPHER ==="
+>> "Uses custom encoding — NOT base64, NOT hex, fully unique to HEX"
+
+$msg -> "This is a top secret message from HEX!"
+$pass -> "secretkey123"
+
+>> "Plaintext:  " + $msg
+$enc -> #encrypt $msg $pass
+>> "Encrypted:  " + $enc
+
+$dec -> #decrypt $enc $pass
+>> "Decrypted:  " + $dec
+
+? $dec == $msg ::
+    >> green "PASSED — encrypt/decrypt works"
+:: else ::
+    >> red "FAILED"
+;;
+
+## Encrypt same thing twice — should give different output (random salt)
+>> "\n=== RANDOM SALT TEST ==="
+$enc1 -> #encrypt "hello" "pass"
+$enc2 -> #encrypt "hello" "pass"
+>> "Attempt 1: " + $enc1
+>> "Attempt 2: " + $enc2
+? $enc1 != $enc2 ::
+    >> green "PASSED — different output each time (random salt)"
+:: else ::
+    >> yellow "Same output (unlikely but possible)"
+;;
+
+## Both decrypt to the same thing
+$d1 -> #decrypt $enc1 "pass"
+$d2 -> #decrypt $enc2 "pass"
+>> "Decrypt 1: " + $d1
+>> "Decrypt 2: " + $d2
+
+## Base64 still works separately
+>> "\n=== BASE64 (separate feature) ==="
+$b -> #base64 "hello world"
+>> "Base64: " + $b
+>> "Decoded: " + #decode64 $b
+
+>> "\n=== DONE ==="
