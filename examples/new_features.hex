@@ -1,0 +1,112 @@
+## Test all new builtins
+
+>> "=== STRING OPS ==="
+$s -> "  hello world  "
+&trim $s
+>> "trim: '" + $s + "'"
+
+$s -> "hello world"
+&startswith $s "hello"
+&endswith $s "world"
+
+$s -> "ha"
+&repeat $s 5
+>> "repeat: " + $s
+
+$s -> "hello world"
+&index $s "world"
+&count $s "l"
+
+$s -> "hello world"
+&chars $s
+>> "chars: " + $s
+
+$s -> "hello world"
+&title $s
+>> "title: " + $s
+
+$s -> "hello"
+&capitalize $s
+>> "capitalize: " + $s
+
+$s -> "Hello World"
+&swapcase $s
+>> "swapcase: " + $s
+
+$s -> "12345"
+&isdigit $s
+$s -> "hello"
+&isalpha $s
+
+>> "\n=== LIST OPS ==="
+$nums -> [5, 3, 1, 4, 2, 3, 1]
+
+&insert $nums 0 99
+>> "insert at 0: " + $nums
+
+&find $nums 4
+&contains $nums 99
+&sum $nums
+&min $nums
+&max $nums
+
+&unique $nums
+>> "unique: " + $nums
+
+$nested -> [[1, 2], [3, 4], [5]]
+&flat $nested
+>> "flat: " + $nested
+
+&fill $zeros 0 5
+>> "fill: " + $zeros
+
+>> "\n=== MAP OPS ==="
+$m -> {"a": 1, "b": 2, "c": 3}
+&haskey $m "b"
+&del $m "c"
+>> "after del c: " + $m
+
+$m2 -> {"d": 4, "e": 5}
+&merge $m $m2
+>> "merged: " + $m
+
+$backup -> $m
+&keys $backup
+>> "keys: " + $backup
+
+>> "\n=== TYPE CHECKS ==="
+>> "isnum 42: " + #isnum 42
+>> "isstr hello: " + #isstr "hello"
+>> "islist []: " + #islist [1, 2]
+>> "isbool true: " + #isbool true
+>> "isnull null: " + #isnull null
+
+>> "\n=== NEW MATH ==="
+>> "min(3,7): " + #min 3 7
+>> "max(3,7): " + #max 3 7
+>> "clamp(15,0,10): " + #clamp 15 0 10
+>> "sign(-5): " + #sign -5
+>> "pow(2,8): " + #pow 2 8
+>> "log(1): " + #log 1
+
+>> "\n=== SAFE CAST ==="
+$x -> #num "not a number"
+>> "safe num of garbage: " + $x
+$x -> #num "42"
+>> "safe num of 42: " + $x
+
+>> "\n=== DATE/TIME ==="
+>> "date: " + #date
+>> "clock: " + #clock
+
+>> "\n=== DEBUG ==="
+#dump 42
+#dump "hello"
+#dump [1, 2, 3]
+#dump true
+
+>> "\n=== ASSERT ==="
+#assert true "this should pass"
+>> "assert passed!"
+
+>> "\n=== ALL NEW FEATURES WORK ==="

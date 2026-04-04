@@ -1,4 +1,3 @@
-"# HEX-CODING-LANGUAGE" 
 # HEX
 
 A symbol-heavy, hacker-aesthetic programming language. Interpreted, built in C++.
@@ -16,17 +15,23 @@ No semicolons. No braces. No `def`/`var`/`let`. Just symbols.
 
 ---
 
-## Build
+## Install
 
-```bash
-g++ -std=c++17 -O2 -static -o hex.exe hex.cpp
-```
+Download `install_hex.exe` and run it. It will:
+- Download the latest `hex.exe` from this repo
+- Install to `C:\Program Files\HEX\`
+- Add `hex` to your system PATH
+- Register `.hex` file association (double-click to run)
+
+After installing, open a **new** terminal and type `hex` to start.
+
+---
 
 ## Run
 
 ```bash
-hex.exe script.hex        # run a file
-hex.exe                   # interactive REPL
+hex script.hex        # run a file
+hex                   # interactive REPL
 ```
 
 ---
@@ -57,8 +62,6 @@ hex.exe                   # interactive REPL
 
 ## Variables
 
-Auto-typed. No declarations needed.
-
 ```
 $name -> "Niko"
 $age -> 17
@@ -72,13 +75,13 @@ $nothing -> null
 ## Print & Input
 
 ```
->> "hello world"              ## print a string
->> $name                      ## print a variable
->> "age: " + $age             ## concatenation
->> 5 + 3                      ## print expression result
+>> "hello world"
+>> $name
+>> "age: " + $age
+>> 5 + 3
 
-<< $name "What's your name?"  ## prompt + read into $name
-<< $x "Enter a number:"      ## auto-detects number vs string
+<< $name "What's your name?"
+<< $x "Enter a number:"
 ```
 
 ---
@@ -100,12 +103,7 @@ $x -> 2 ^ 10      ## 1024
 
 ```
 ==    !=    <    >    <=    >=
-
 &&    ||    !!
-
-? $age >= 18 && $name != "" ::
-    >> "valid"
-;;
 ```
 
 ---
@@ -121,8 +119,6 @@ $x -> 2 ^ 10      ## 1024
     >> "small"
 ;;
 ```
-
-`?` = if, `??` = else if, `:: else ::` = else, `;;` = end block.
 
 ---
 
@@ -174,21 +170,17 @@ while true ::
 ## Functions
 
 ```
-## Define
 greet $name ::
     >> "yo " + $name + "!"
 ;;
 
-## Call
 greet "Niko"
 
-## With return value
 add $a $b ::
     => $a + $b
 ;;
 
 $result -> add 10 20
->> $result              ## 30
 ```
 
 ---
@@ -197,16 +189,26 @@ $result -> add 10 20
 
 ```
 $nums -> [1, 2, 3, 4, 5]
->> $nums                 ## [1, 2, 3, 4, 5]
 >> $nums[0]              ## 1
 >> $nums[1:3]            ## [2, 3]
 
-&push $nums 6            ## append 6
+&push $nums 6            ## append
 &pop $nums               ## remove last
-&rm $nums 0              ## remove index 0
-&len $nums               ## print length
+&rm $nums 0              ## remove at index
+&insert $nums 2 99       ## insert at index
 &sort $nums              ## sort ascending
-&reverse $nums           ## reverse
+&reverse $nums           ## reverse order
+&shuffle $nums           ## randomize order
+&unique $nums            ## remove duplicates
+&flat $nested            ## flatten nested lists
+&fill $zeros 0 5         ## create [0,0,0,0,0]
+&len $nums               ## print length
+&sum $nums               ## print sum of all numbers
+&min $nums               ## print minimum
+&max $nums               ## print maximum
+&find $nums 99           ## print index of value (-1 if not found)
+&contains $nums 99       ## print true/false
+&count $nums 3           ## print how many times value appears
 ```
 
 ---
@@ -216,16 +218,28 @@ $nums -> [1, 2, 3, 4, 5]
 ```
 $msg -> "hello world"
 
-&upper $msg              ## "HELLO WORLD"
-&lower $msg              ## "hello world"
+&upper $msg              ## HELLO WORLD
+&lower $msg              ## hello world
+&trim $msg               ## strip whitespace from both ends
+&title $msg              ## Hello World
+&capitalize $msg         ## Hello world
+&swapcase $msg           ## HELLO WORLD -> hello world
 &replace $msg "world" "hex"
-&has $msg "hello"        ## prints true/false
-&split $msg " "          ## turns $msg into list ["hello", "world"]
+&split $msg " "          ## turns into list ["hello", "world"]
 &join $msg "-"           ## joins list back: "hello-world"
+&repeat $msg 3           ## "hahaha"
+&chars $msg              ## ["h", "e", "l", ...]
+&has $msg "hello"        ## true/false
+&startswith $msg "hel"   ## true/false
+&endswith $msg "rld"     ## true/false
+&index $msg "world"      ## position (or -1)
+&count $msg "l"          ## count occurrences
+&isdigit $msg            ## true if all digits
+&isalpha $msg            ## true if all letters
 
->> $msg[0]               ## "h"
->> $msg[0:5]             ## "hello"
->> #len $msg             ## 11
+>> $msg[0]               ## first char
+>> $msg[0:5]             ## slice
+>> #len $msg             ## length
 ```
 
 ---
@@ -234,10 +248,14 @@ $msg -> "hello world"
 
 ```
 $person -> {"name": "Niko", "age": 17}
+>> $person["name"]
+$person["age"] -> 18
 
->> $person["name"]       ## "Niko"
-$person["age"] -> 18     ## update value
->> $person               ## {"age": 18, "name": "Niko"}
+&keys $person            ## turns into list of keys
+&vals $person            ## turns into list of values
+&del $person "age"       ## delete a key
+&haskey $person "name"   ## true/false
+&merge $map1 $map2       ## merge map2 into map1
 ```
 
 ---
@@ -245,16 +263,13 @@ $person["age"] -> 18     ## update value
 ## File I/O
 
 ```
-~write "data.txt" "hello"           ## write (overwrite)
-~append "data.txt" "new line"       ## append
-$content -> ~read "data.txt"        ## read entire file
->> $content
-
-? ~exists "data.txt" ::             ## check if file exists
-    >> "found it"
+~write "data.txt" "hello"
+~append "data.txt" "new line"
+$content -> ~read "data.txt"
+? ~exists "data.txt" ::
+    >> "found"
 ;;
-
-~del "data.txt"                     ## delete file
+~del "data.txt"
 ```
 
 ---
@@ -262,10 +277,8 @@ $content -> ~read "data.txt"        ## read entire file
 ## Shell Commands
 
 ```
-! "dir"                             ## run command (output to console)
-! "cls"                             ## clear screen
-
-$user -> ! "whoami"                 ## capture output into variable
+! "dir"
+$user -> ! "whoami"
 >> "logged in as: " + $user
 ```
 
@@ -273,29 +286,61 @@ $user -> ! "whoami"                 ## capture output into variable
 
 ## Builtins (#)
 
-### Expressions (return a value)
+### Type Conversion
 ```
-$x -> #int "42"          ## parse to integer
-$x -> #float "3.14"      ## parse to float
-$x -> #str 42            ## convert to string
-$x -> #rand 1 100        ## random number in range
-$x -> #abs -5            ## absolute value (5)
-$x -> #round 3.7         ## round (4)
-$x -> #floor 3.7         ## floor (3)
-$x -> #ceil 3.2          ## ceil (4)
-$x -> #sqrt 16           ## square root (4)
-$x -> #len $mylist       ## length of list/string/map
-$x -> #type $var         ## type as string: "number", "string", etc.
-$t -> #time              ## current time in ms
+$x -> #int "42"
+$x -> #float "3.14"
+$x -> #str 42
+$x -> #num "42"          ## safe — returns null on fail
+$x -> #bool $val         ## truthy check
 ```
 
-### Statements (perform an action)
+### Type Checks
 ```
+#isnum $x                ## true/false
+#isstr $x
+#islist $x
+#ismap $x
+#isbool $x
+#isnull $x
+```
+
+### Math
+```
+#abs -5                  ## 5
+#round 3.7               ## 4
+#floor 3.7               ## 3
+#ceil 3.2                ## 4
+#sqrt 16                 ## 4
+#min 3 7                 ## 3
+#max 3 7                 ## 7
+#clamp 15 0 10           ## 10
+#pow 2 8                 ## 256
+#log 2.718               ## ~1
+#sin 3.14                ## ~0
+#cos 0                   ## 1
+#tan 0                   ## 0
+#sign -5                 ## -1
+#rand 1 100              ## random number
+```
+
+### Utility
+```
+#len $var                ## length of string/list/map
+#type $var               ## "number", "string", etc.
+#time                    ## current time in ms
+#date                    ## "2026-04-05"
+#clock                   ## "23:45:12"
 #wait 1000               ## sleep 1000ms
 #clear                   ## clear screen
 #swap $a $b              ## swap two variables
 #exit                    ## exit program
-#exit 1                  ## exit with code
+```
+
+### Debug
+```
+#dump $var               ## prints type + value
+#assert $x > 0 "msg"     ## crash with message if false
 ```
 
 ---
@@ -304,51 +349,43 @@ $t -> #time              ## current time in ms
 
 ```
 #try ::
-    $x -> #int "not_a_number"
+    $x -> #int "abc"
 #catch ::
     >> "error caught!"
 ;;
 ```
 
----
-
-## Project Structure
-
+### Error Types
+Errors display Python-style tracebacks:
 ```
-hex/
-  token.h            Token types + Token struct
-  value.h            Value type system (num, str, bool, list, map, func, null)
-  environment.h      Variable scopes
-  lexer.h            Tokenizer
-  interpreter.h      Parser + executor (the big one)
-  hex.cpp            main() entry point
-  README.md          This file
-  examples/
-    hello.hex        Hello world + input
-    calculator.hex   Math calculator
-    guessing_game.hex  Number guessing game
-    fizzbuzz.hex     Classic fizzbuzz
-    file_demo.hex    File read/write/append/delete
+  Traceback:
+    File "test.hex", line 5
+      $x -> 10 / 0
+                  ^
+  ZeroDivisionError: division by zero
 ```
 
----
-
-## How It Works
-
-1. **Lexer** (`lexer.h`) reads source code and produces tokens
-2. **Interpreter** (`interpreter.h`) walks the token stream directly (no AST)
-3. **Values** (`value.h`) are dynamically typed — numbers, strings, bools, lists, maps
-4. **Environment** (`environment.h`) handles variable scopes with parent chain lookup
-5. Blocks use `::` to open and `;;` to close — no indentation rules, no braces
+| Error | When |
+|-------|------|
+| `SyntaxError` | Bad syntax, unknown command |
+| `NameError` | Undefined variable |
+| `TypeError` | Wrong type for operation |
+| `ValueError` | Wrong value |
+| `IndexError` | Index out of range |
+| `KeyError` | Map key not found |
+| `ZeroDivisionError` | Division by zero |
+| `FileError` | File operation failed |
+| `ArgumentError` | Wrong number of args |
 
 ---
 
 ## Examples
 
-```bash
-hex.exe examples/hello.hex
-hex.exe examples/fizzbuzz.hex
-hex.exe examples/guessing_game.hex
-hex.exe examples/calculator.hex
-hex.exe examples/file_demo.hex
-```
+See the `examples/` folder:
+- `hello.hex` — hello world + input
+- `calculator.hex` — math calculator
+- `guessing_game.hex` — number guessing game
+- `fizzbuzz.hex` — classic fizzbuzz
+- `file_demo.hex` — file operations
+- `errors.hex` — error system demo
+- `new_features.hex` — all string/list/map/math builtins
