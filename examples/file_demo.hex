@@ -1,0 +1,31 @@
+## file_demo.hex — file operations
+
+>> "=== File Operations Demo ==="
+
+## Write a file
+~write "demo.txt" "line 1: hello from HEX"
+>> "Wrote demo.txt"
+
+## Append to it
+~append "demo.txt" "line 2: appended!"
+~append "demo.txt" "line 3: more data"
+>> "Appended 2 lines"
+
+## Check if it exists
+? ~exists "demo.txt" ::
+    >> "File exists: true"
+;;
+
+## Read it back
+$content -> ~read "demo.txt"
+>> "--- File contents ---"
+>> $content
+>> "--- End ---"
+
+## Clean up
+~del "demo.txt"
+>> "Deleted demo.txt"
+
+? !!~exists "demo.txt" ::
+    >> "Confirmed: file is gone"
+;;

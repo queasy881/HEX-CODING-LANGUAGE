@@ -1,0 +1,18 @@
+## Simple Guessing Game in HEX
+
+$secret -> #rand 1 10
+$guess -> 0
+
+>> "Guess a number between 1 and 10!"
+
+while $guess != $secret ::
+    << $guess "Your guess: "
+
+    ? $guess < $secret ::
+        >> "Too low!"
+    ?? $guess > $secret ::
+        >> "Too high!"
+    ;;
+;;
+
+>> "You got it!"

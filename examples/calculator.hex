@@ -1,0 +1,31 @@
+## calculator.hex — simple math calculator
+
+>> "=== HEX Calculator ==="
+>> "Operators: + - * / % ^"
+
+<< $a "First number:"
+<< $op "Operator (+, -, *, /, %, ^):"
+<< $b "Second number:"
+
+$a -> #float $a
+$b -> #float $b
+
+? $op == "+" ::
+    >> $a + " + " + $b + " = " + ($a + $b)
+?? $op == "-" ::
+    >> $a + " - " + $b + " = " + ($a - $b)
+?? $op == "*" ::
+    >> $a + " * " + $b + " = " + ($a * $b)
+?? $op == "/" ::
+    ? $b == 0 ::
+        >> "Error: division by zero"
+    :: else ::
+        >> $a + " / " + $b + " = " + ($a / $b)
+    ;;
+?? $op == "%" ::
+    >> $a + " % " + $b + " = " + ($a % $b)
+?? $op == "^" ::
+    >> $a + " ^ " + $b + " = " + ($a ^ $b)
+:: else ::
+    >> "Unknown operator: " + $op
+;;

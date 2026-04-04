@@ -1,0 +1,22 @@
+## guessing_game.hex — guess the number
+
+>> "=== Number Guessing Game ==="
+>> "I'm thinking of a number between 1 and 100..."
+
+$secret -> #rand 1 100
+$tries -> 0
+
+while true ::
+    << $guess "Your guess:"
+    $guess -> #int $guess
+    $tries -> $tries + 1
+
+    ? $guess == $secret ::
+        >> "CORRECT! You got it in " + $tries + " tries!"
+        break
+    ?? $guess < $secret ::
+        >> "Too low! Try higher."
+    :: else ::
+        >> "Too high! Try lower."
+    ;;
+;;

@@ -1,0 +1,22 @@
+## errors.hex — test error messages
+
+>> "=== Testing Error System ==="
+
+## NameError: undefined variable
+>> "Test 1: NameError"
+>> $undefined_var
+
+## ZeroDivisionError
+>> "Test 2: ZeroDivisionError"
+$x -> 10 / 0
+
+## TypeError: bad list op
+>> "Test 3: TypeError"
+$x -> 42
+&push $x 5
+
+## SyntaxError: unknown builtin
+>> "Test 4: SyntaxError"
+#fakefunc
+
+>> "=== Done ==="

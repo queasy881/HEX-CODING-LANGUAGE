@@ -1,0 +1,16 @@
+## hello.hex — your first HEX program
+
+>> "=== Welcome to HEX ==="
+
+<< $name "What's your name?"
+<< $age "How old are you?"
+
+>> "Yo " + $name + "! You're " + $age + " years old."
+
+? $age >= 18 ::
+    >> "You're an adult."
+:: else ::
+    >> "You're still a minor."
+;;
+
+>> "Peace out!"
