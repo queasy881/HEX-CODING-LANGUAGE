@@ -337,10 +337,77 @@ $x -> #bool $val         ## truthy check
 #exit                    ## exit program
 ```
 
+### Encoding
+```
+#base64 "hello"          ## "aGVsbG8="
+#decode64 "aGVsbG8="     ## "hello"
+```
+
+### HEX Cipher (custom encryption)
+Built-in encryption — no libraries needed. Python needs `pip install cryptography`.
+```
+$encrypted -> #encrypt "my secret" "password123"
+## returns: "HX1:base64encodeddata..."
+
+$decrypted -> #decrypt $encrypted "password123"
+## returns: "my secret"
+```
+- XOR stream cipher with key derivation
+- Random salt per encryption (same input = different output each time)
+- Format: `HX1:<base64(salt + ciphertext)>`
+
 ### Debug
 ```
 #dump $var               ## prints type + value
 #assert $x > 0 "msg"     ## crash with message if false
+```
+
+---
+
+## HTTP Requests
+
+Built-in networking — no libraries needed. Python needs `pip install requests`.
+
+```
+## GET request
+$response -> ~get "https://api.example.com/data"
+>> $response
+
+## POST request
+$result -> ~post "https://api.example.com/submit" "name=niko&age=17"
+>> $result
+
+## Download a file
+~download "https://example.com/file.zip" "file.zip"
+```
+
+---
+
+## String Interpolation
+
+Variables inside `{$var}` are automatically expanded in any string. Python needs `f""` prefix.
+
+```
+$name -> "Niko"
+$age -> 17
+>> "Hello {$name}, you are {$age} years old!"
+## prints: Hello Niko, you are 17 years old!
+```
+
+---
+
+## Colored Output
+
+Built-in colors — no libraries needed. Python needs `pip install colorama`.
+
+```
+>> red "Error: something broke"
+>> green "Success!"
+>> yellow "Warning: be careful"
+>> blue "Info"
+>> cyan "Debug info"
+>> magenta "Special"
+>> bold "Important"
 ```
 
 ---
@@ -389,3 +456,16 @@ See the `examples/` folder:
 - `file_demo.hex` — file operations
 - `errors.hex` — error system demo
 - `new_features.hex` — all string/list/map/math builtins
+- `network_crypto.hex` — HTTP requests, base64, encryption
+
+---
+
+## What HEX Does That Python Can't (without pip)
+
+| Feature | Python | HEX |
+|---------|--------|-----|
+| HTTP requests | `pip install requests` | `~get "url"` built-in |
+| Colored output | `pip install colorama` | `>> red "text"` built-in |
+| Encryption | `pip install cryptography` | `#encrypt "msg" "pass"` built-in |
+| String interpolation | `f"hello {name}"` (needs f prefix) | `"hello {$name}"` (always works) |
+| Base64 | `import base64` (verbose) | `#base64 "text"` one-liner |

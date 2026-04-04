@@ -1,0 +1,57 @@
+## Test HTTP, Base64, and HEX Encryption
+
+>> "=== HTTP GET ==="
+$response -> ~get "http://httpbin.org/get"
+>> "Response length: " + #len $response
+>> $response[0:100]
+
+>> "\n=== BASE64 ==="
+$original -> "Hello from HEX language!"
+$encoded -> #base64 $original
+>> "Original:  " + $original
+>> "Encoded:   " + $encoded
+$decoded -> #decode64 $encoded
+>> "Decoded:   " + $decoded
+
+>> "\n=== HEX ENCRYPTION ==="
+$secret -> "This is my secret message! Nobody can read this."
+$password -> "mypassword123"
+
+>> "Plaintext:  " + $secret
+$encrypted -> #encrypt $secret $password
+>> "Encrypted:  " + $encrypted
+
+$decrypted -> #decrypt $encrypted $password
+>> "Decrypted:  " + $decrypted
+
+## Verify it matches
+? $decrypted == $secret ::
+    >> green "Encryption/Decryption: PASSED"
+:: else ::
+    >> red "Encryption/Decryption: FAILED"
+;;
+
+## Wrong password should fail
+>> "\n=== WRONG PASSWORD TEST ==="
+#try ::
+    $bad -> #decrypt $encrypted "wrongpassword"
+    >> "Got: " + $bad
+#catch ::
+    >> yellow "Wrong password correctly rejected"
+;;
+
+>> "\n=== STRING INTERPOLATION ==="
+$name -> "Niko"
+$age -> 17
+>> "Hello {$name}, you are {$age} years old!"
+
+>> "\n=== COLORED OUTPUT ==="
+>> red "This is red"
+>> green "This is green"
+>> yellow "This is yellow"
+>> blue "This is blue"
+>> cyan "This is cyan"
+>> magenta "This is magenta"
+>> bold "This is bold"
+
+>> "\n=== ALL TESTS DONE ==="
