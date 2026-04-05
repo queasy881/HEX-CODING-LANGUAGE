@@ -665,6 +665,11 @@ class Interpreter {
             auto val = parse_unary();
             return Value::make_num(-val->as_num());
         }
+        if (check(Tok::NOT)) {
+            advance();
+            auto val = parse_unary();
+            return Value::make_bool(!val->truthy());
+        }
         return parse_postfix();
     }
 
@@ -1030,8 +1035,9 @@ class Interpreter {
             while (check(Tok::DOLLAR_IDENT))
                 params.push_back(advance().value);
             expect(Tok::FAT_ARROW, "expected '=>' in lambda");
-            // Capture body start, skip to end of expression
-            int body_start = (int)pos_;
+            // Lambda body: insert a FAT_ARROW token before the expression
+            // so call_function sees => expr and returns it
+            int body_start = (int)pos_ - 1; // include the => token
             parse_expr(); // skip over body expression
             int body_end = (int)pos_;
             return Value::make_func("lambda", params, body_start, body_end);
@@ -1046,10 +1052,23 @@ class Interpreter {
     ValuePtr exec_hash_builtin(const std::string& name) {
         if (name == "int") {
             auto val = parse_expr();
-            return Value::make_num((int64_t)val->as_num());
+            if (val->type == Value::NUM) return Value::make_num((int64_t)val->num);
+            if (val->type == Value::BOOL) return Value::make_num(val->boolean ? 1 : 0);
+            if (val->type == Value::STR) {
+                try { size_t p; int64_t n = std::stoll(val->str, &p); if (p == val->str.size()) return Value::make_num((double)n); }
+                catch (...) {}
+                throw_value("cannot convert '" + val->str + "' to int");
+            }
+            throw_type("cannot convert " + std::string(val->type == Value::TNULL ? "null" : "value") + " to int");
         }
         if (name == "float") {
             auto val = parse_expr();
+            if (val->type == Value::NUM) return val;
+            if (val->type == Value::STR) {
+                try { size_t p; double n = std::stod(val->str, &p); if (p == val->str.size()) return Value::make_num(n); }
+                catch (...) {}
+                throw_value("cannot convert '" + val->str + "' to float");
+            }
             return Value::make_num(val->as_num());
         }
         if (name == "str") {
@@ -1309,18 +1328,16 @@ class Interpreter {
             return Value::make_str(text);
         }
 
-        // Range — with optional step: #range 1 10 or #range 1 10 2
+        // Range — with optional step: #range 1 10 or #range 1 10 2 or #range 10 0 (-2)
         if (name == "range") {
             auto start = parse_expr();
             auto end_v = parse_expr();
             int s = (int)start->as_num(), e = (int)end_v->as_num();
             int step = (s <= e) ? 1 : -1;
-            // Check for optional step argument (number on same line)
-            if (check(Tok::NUMBER)) step = (int)std::stod(advance().value);
-            else if (check(Tok::MINUS)) {
-                size_t sv = pos_; advance();
-                if (check(Tok::NUMBER)) { step = -(int)std::stod(advance().value); }
-                else { pos_ = sv; }
+            // Check for optional step — must use parens for negative: #range 10 0 (-2)
+            if (!check(Tok::NEWLINE) && !check(Tok::EOF_TOK) && !check(Tok::DOUBLE_SEMI)) {
+                auto step_val = parse_expr();
+                if (step_val->type == Value::NUM) step = (int)step_val->as_num();
             }
             ValueList items;
             if (step > 0) { for (int i = s; i <= e; i += step) items.push_back(Value::make_num(i)); }
@@ -1656,12 +1673,26 @@ class Interpreter {
         // Eval — evaluate HEX code string
         if (name == "eval") {
             auto code = parse_expr()->as_str();
-            Interpreter sub;
-            sub.env_ = env_;
-            sub.global_env_ = global_env_;
-            sub.run(code, "<eval>");
-            auto result = sub.env_->get("__eval_result");
-            return result ? result : Value::make_null();
+            // Save state, run eval code, restore
+            auto old_tokens = tokens_;
+            auto old_pos = pos_;
+            auto old_source = source_;
+            auto old_file = filename_;
+            Lexer lex(code);
+            tokens_ = lex.tokenize();
+            pos_ = 0;
+            source_ = code;
+            filename_ = "<eval>";
+            while (!at_end()) {
+                try { exec_statement(); }
+                catch (HexError& e) { ErrorFormatter::print(e, source_); break; }
+                catch (ReturnSignal& r) { tokens_ = old_tokens; pos_ = old_pos; source_ = old_source; filename_ = old_file; return r.value; }
+            }
+            tokens_ = old_tokens;
+            pos_ = old_pos;
+            source_ = old_source;
+            filename_ = old_file;
+            return Value::make_null();
         }
 
         // Combinatorics
@@ -1750,6 +1781,82 @@ class Interpreter {
         if (name == "sleep") {
             auto secs = parse_expr()->as_num();
             std::this_thread::sleep_for(std::chrono::milliseconds((int)(secs * 1000)));
+            return Value::make_null();
+        }
+
+        // Query builtins as expressions (return values instead of printing)
+        if (name == "has") {
+            auto container = parse_expr();
+            auto needle = parse_expr();
+            if (container->type == Value::STR)
+                return Value::make_bool(container->str.find(needle->as_str()) != std::string::npos);
+            if (container->type == Value::LIST) {
+                for (auto& item : container->list)
+                    if (item->as_str() == needle->as_str()) return Value::make_bool(true);
+                return Value::make_bool(false);
+            }
+            if (container->type == Value::MAP)
+                return Value::make_bool(container->map_val.count(needle->as_str()) > 0);
+            return Value::make_bool(false);
+        }
+        if (name == "contains") {
+            auto container = parse_expr();
+            auto needle = parse_expr();
+            if (container->type == Value::LIST) {
+                for (auto& item : container->list)
+                    if (item->as_str() == needle->as_str()) return Value::make_bool(true);
+            }
+            return Value::make_bool(false);
+        }
+        if (name == "find") {
+            auto container = parse_expr();
+            auto needle = parse_expr();
+            if (container->type == Value::STR) {
+                size_t p = container->str.find(needle->as_str());
+                return Value::make_num(p != std::string::npos ? (double)p : -1);
+            }
+            if (container->type == Value::LIST) {
+                for (size_t i = 0; i < container->list.size(); i++)
+                    if (container->list[i]->as_str() == needle->as_str()) return Value::make_num((double)i);
+                return Value::make_num(-1);
+            }
+            return Value::make_num(-1);
+        }
+        if (name == "count") {
+            auto container = parse_expr();
+            auto needle = parse_expr();
+            int c = 0;
+            if (container->type == Value::STR) {
+                size_t p = 0;
+                while ((p = container->str.find(needle->as_str(), p)) != std::string::npos) { c++; p += needle->as_str().size(); }
+            } else if (container->type == Value::LIST) {
+                for (auto& item : container->list) if (item->as_str() == needle->as_str()) c++;
+            }
+            return Value::make_num(c);
+        }
+        if (name == "sum") {
+            auto list = parse_expr();
+            double total = 0;
+            if (list->type == Value::LIST)
+                for (auto& item : list->list) total += item->as_num();
+            return Value::make_num(total);
+        }
+        if (name == "min_of") {
+            auto list = parse_expr();
+            if (list->type == Value::LIST && !list->list.empty()) {
+                double m = list->list[0]->as_num();
+                for (auto& item : list->list) if (item->as_num() < m) m = item->as_num();
+                return Value::make_num(m);
+            }
+            return Value::make_null();
+        }
+        if (name == "max_of") {
+            auto list = parse_expr();
+            if (list->type == Value::LIST && !list->list.empty()) {
+                double m = list->list[0]->as_num();
+                for (auto& item : list->list) if (item->as_num() > m) m = item->as_num();
+                return Value::make_num(m);
+            }
             return Value::make_null();
         }
 
@@ -2134,6 +2241,28 @@ class Interpreter {
                     for (auto& item : start_val->list) {
                         pos_ = body_start;
                         env_->set(var, item);
+                        try {
+                            exec_block_no_semi();
+                        } catch (BreakSignal&) { break; }
+                        catch (ContinueSignal&) { continue; }
+                    }
+                }
+                // Map iteration: iterate over keys
+                else if (start_val->type == Value::MAP) {
+                    for (auto& [key, val] : start_val->map_val) {
+                        pos_ = body_start;
+                        env_->set(var, Value::make_str(key));
+                        try {
+                            exec_block_no_semi();
+                        } catch (BreakSignal&) { break; }
+                        catch (ContinueSignal&) { continue; }
+                    }
+                }
+                // String iteration: iterate over characters
+                else if (start_val->type == Value::STR) {
+                    for (char c : start_val->str) {
+                        pos_ = body_start;
+                        env_->set(var, Value::make_str(std::string(1, c)));
                         try {
                             exec_block_no_semi();
                         } catch (BreakSignal&) { break; }
@@ -2651,16 +2780,20 @@ class Interpreter {
                 auto pattern = parse_expr()->as_str();
                 ValueList found;
                 try {
-                    for (auto& entry : std::filesystem::recursive_directory_iterator(dir)) {
-                        std::string name = entry.path().filename().string();
+                    for (auto& entry : std::filesystem::recursive_directory_iterator(dir,
+                            std::filesystem::directory_options::skip_permission_denied)) {
+                        std::string fname = entry.path().filename().string();
+                        // Skip hidden directories (starting with .)
+                        if (entry.is_directory() && !fname.empty() && fname[0] == '.') continue;
+                        if (!entry.is_regular_file()) continue;
                         // Simple wildcard: *.txt or exact match
                         if (pattern[0] == '*') {
                             std::string ext = pattern.substr(1);
-                            if (name.size() >= ext.size() &&
-                                name.substr(name.size() - ext.size()) == ext) {
+                            if (fname.size() >= ext.size() &&
+                                fname.substr(fname.size() - ext.size()) == ext) {
                                 found.push_back(Value::make_str(entry.path().string()));
                             }
-                        } else if (name == pattern) {
+                        } else if (fname == pattern) {
                             found.push_back(Value::make_str(entry.path().string()));
                         }
                     }
@@ -4034,6 +4167,29 @@ class Interpreter {
             skip_newlines();
             exec_if_body();
             if (check(Tok::DOUBLE_SEMI)) advance();
+            return;
+        }
+
+        // #eval — execute HEX code from string (statement context)
+        if (name == "eval") {
+            auto code = parse_expr()->as_str();
+            auto old_tokens = tokens_;
+            auto old_pos = pos_;
+            auto old_source = source_;
+            auto old_file = filename_;
+            Lexer lex(code);
+            tokens_ = lex.tokenize();
+            pos_ = 0;
+            source_ = code;
+            filename_ = "<eval>";
+            while (!at_end()) {
+                try { exec_statement(); }
+                catch (HexError& e) { ErrorFormatter::print(e, source_); break; }
+            }
+            tokens_ = old_tokens;
+            pos_ = old_pos;
+            source_ = old_source;
+            filename_ = old_file;
             return;
         }
 

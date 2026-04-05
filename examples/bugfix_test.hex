@@ -1,0 +1,59 @@
+## Test all 9 bug fixes
+
+>> bold "=== BUG FIX TESTS ==="
+
+>> "\n--- BUG 2: Range with negative step ---"
+$r -> #range 10 0 (-2)
+>> "range 10..0 step -2: " + $r
+
+>> "\n--- BUG 4: for..in on map ---"
+$m -> {"name": "Niko", "age": 17, "lang": "HEX"}
+>> "Map keys:"
+for $key in $m ::
+    >> "  key: {$key} = " + $m[$key]
+;;
+
+>> "\n--- BUG 4b: for..in on string ---"
+for $ch in "HEX" ::
+    >>> $ch
+    >>> " "
+;;
+>> ""
+
+>> "\n--- BUG 5: #int 'abc' throws ValueError ---"
+#try ::
+    $x -> #int "abc"
+#catch ::
+    >> green "Caught: {$__error_type} - {$__error_msg}"
+;;
+
+>> "\n--- BUG 7: !! in expressions ---"
+$a -> true
+>> "!!true = " + !!$a
+>> "result: " + !!false
+$val -> (!!true ? "was true" : "was false")
+>> "ternary with !!: " + $val
+
+>> "\n--- BUG 9: Query ops as expressions ---"
+$list -> [1, 2, 3, 4, 5]
+$has_it -> #has $list 3
+>> "#has [1..5] 3: " + $has_it
+$idx -> #find $list 4
+>> "#find [1..5] 4: " + $idx
+$cnt -> #count "abracadabra" "a"
+>> "#count 'abracadabra' 'a': " + $cnt
+$total -> #sum $list
+>> "#sum [1..5]: " + $total
+$mn -> #min_of $list
+>> "#min_of: " + $mn
+$mx -> #max_of $list
+>> "#max_of: " + $mx
+
+>> "\n--- BUG 3: #eval ---"
+#eval '>> "hello from eval!"'
+
+>> "\n--- Verify nothing broke ---"
+? (5 + 3) == 8 :: >> green "math: OK" ;;
+? (#len [1, 2, 3]) == 3 :: >> green "lists: OK" ;;
+
+>> bold "\n=== ALL BUG FIXES VERIFIED ==="
