@@ -515,6 +515,33 @@ match $day ::
 
 ---
 
+## Async Functions
+
+Define functions that run in background threads. `await` launches the thread and blocks until the result is ready.
+
+```
+## Define async function
+async fetch_data $url ::
+    $response -> ~get $url
+    => $response
+;;
+
+## Call it — runs in a separate thread
+$data -> await fetch_data "https://api.example.com"
+>> $data
+
+## Async with delay
+async slow_add $a $b ::
+    #wait 1000
+    => $a + $b
+;;
+
+$result -> await slow_add 10 20
+>> $result    ## 30 (after 1 second)
+```
+
+---
+
 ## Forever Loop
 
 ```
@@ -637,6 +664,7 @@ See the `examples/` folder:
 - `network_crypto.hex` — HTTP requests, base64, encryption
 - `crypto_test.hex` — custom HEX cipher demo
 - `v2_features.hex` — compound assignment, ternary, match, classes, destructuring, map/filter/reduce
+- `async_test.hex` — async functions with await
 
 ---
 

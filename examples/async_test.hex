@@ -1,0 +1,62 @@
+## Test async functions
+
+>> "=== ASYNC FUNCTIONS ==="
+
+## Define an async function
+async slow_add $a $b ::
+    #wait 500
+    => $a + $b
+;;
+
+## Define a normal function for comparison
+fast_add $a $b ::
+    => $a + $b
+;;
+
+## Call async — runs in a background thread, blocks on await
+>> "Starting async call..."
+$t1 -> #time
+$result -> await slow_add 10 20
+$t2 -> #time
+>> "Result: {$result}"
+>> "Took: " + ($t2 - $t1) + " ms"
+
+## Multiple async calls
+>> "\n=== MULTIPLE ASYNC ==="
+async fetch $url ::
+    $data -> ~get $url
+    => #len $data
+;;
+
+>> "Fetching 2 URLs in parallel..."
+$t1 -> #time
+
+## These run in separate threads
+$len1 -> await fetch "http://httpbin.org/get"
+$len2 -> await fetch "http://httpbin.org/ip"
+
+$t2 -> #time
+>> "Response 1 length: {$len1}"
+>> "Response 2 length: {$len2}"
+>> "Total time: " + ($t2 - $t1) + " ms"
+
+## Async with computation
+>> "\n=== ASYNC COMPUTATION ==="
+async fib $n ::
+    ? $n <= 1 ::
+        => $n
+    ;;
+    $a -> 0
+    $b -> 1
+    for $i in 2..$n ::
+        $temp -> $b
+        $b -> $a + $b
+        $a -> $temp
+    ;;
+    => $b
+;;
+
+$result -> await fib 30
+>> "fib(30) = {$result}"
+
+>> "\n=== ASYNC DONE ==="
