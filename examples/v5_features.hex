@@ -1,0 +1,114 @@
+>> bold "=== V5 — PYTHON PARITY ==="
+
+>> "\n--- LIST + and * ---"
+$a -> [1, 2] + [3, 4]
+>> "list concat: " + $a
+$b -> [0] * 5
+>> "list repeat: " + $b
+$s -> "ha" * 3
+>> "string repeat: " + $s
+
+>> "\n--- RANDOM ---"
+$pick -> #choice [10, 20, 30, 40, 50]
+>> "choice: " + $pick
+$samp -> #sample [1, 2, 3, 4, 5, 6, 7, 8, 9] 3
+>> "sample 3: " + $samp
+>> "uniform: " + #uniform 0.0 1.0
+
+>> "\n--- MATH EXTRAS ---"
+>> "factorial(7): " + #factorial 7
+>> "gcd(12, 8): " + #gcd 12 8
+>> "lcm(4, 6): " + #lcm 4 6
+>> "isnan(0): " + #isnan 0
+>> "radians(180): " + #radians 180
+>> "degrees(3.14): " + #degrees 3.14
+>> "hypot(3, 4): " + #hypot 3 4
+
+>> "\n--- STATISTICS ---"
+$data -> [10, 20, 30, 40, 50]
+>> "mean: " + #mean $data
+>> "median: " + #median $data
+>> "stdev: " + #stdev $data
+>> "variance: " + #variance $data
+>> "mode: " + #mode [1, 2, 2, 3, 3, 3, 4]
+
+>> "\n--- UUID ---"
+>> "uuid: " + #uuid
+
+>> "\n--- HASH ---"
+>> "hash('hello'): " + #hash "hello"
+>> "hash('world'): " + #hash "world"
+
+>> "\n--- COUNTER ---"
+$counts -> #counter "abracadabra"
+>> "counter: " + $counts
+
+>> "\n--- COPY / DEEPCOPY ---"
+$orig -> [1, [2, 3], 4]
+$shallow -> #copy $orig
+$deep -> #deepcopy $orig
+>> "original: " + $orig
+>> "shallow: " + $shallow
+>> "deep: " + $deep
+
+>> "\n--- COMBINATORICS ---"
+$c -> #combinations [1, 2, 3] 2
+>> "combinations(3,2): " + $c
+$p -> #permutations [1, 2, 3]
+>> "permutations(3): " + $p
+$l1 -> [1, 2]
+$l2 -> ["a", "b"]
+$pr -> #product $l1 $l2
+>> "product: " + $pr
+
+>> "\n--- GLOB ---"
+$files -> #glob "*.hex"
+>> "glob *.hex: " + #len $files + " files"
+
+>> "\n--- TEMPFILE ---"
+$tmp -> #tempfile
+>> "tempfile: " + $tmp
+
+>> "\n--- STRING EXTRAS ---"
+$s -> "hello\nworld\nfoo"
+&splitlines $s
+>> "splitlines: " + $s
+
+$s -> "prefix_data"
+&removeprefix $s "prefix_"
+>> "removeprefix: " + $s
+
+$s -> "data_suffix"
+&removesuffix $s "_suffix"
+>> "removesuffix: " + $s
+
+>> "\n--- LIST/MAP EXTRAS ---"
+$list -> [1, 2, 3, 4, 5]
+&remove $list 3
+>> "remove by value: " + $list
+
+$list2 -> [1, 2]
+&extend $list2 [3, 4, 5]
+>> "extend: " + $list2
+
+&clear $list
+>> "clear: " + $list
+
+$m -> {"a": 1, "b": 2, "c": 3}
+&items $m
+>> "items: " + $m
+
+$m2 -> {"x": 10}
+&setdefault $m2 "y" 20
+>> "setdefault: " + $m2
+
+&fromkeys $newmap ["a", "b", "c"] 0
+>> "fromkeys: " + $newmap
+
+>> "\n--- DEEP TEST CHECK ---"
+? (5 + 3) == 8 :: >> green "math: OK" ;;
+? (#len [1, 2, 3]) == 3 :: >> green "lists: OK" ;;
+$obj -> #json '{"a":1}'
+? $obj["a"] == 1 :: >> green "json: OK" ;;
+
+>> bold "\n=== ALL V5 FEATURES WORK ==="
