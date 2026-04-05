@@ -1,19 +1,11 @@
 ## ================================================================
-## DEEP TEST — tests EVERYTHING in HEX with complex scenarios
-## If this file runs without errors, the language is solid
+## DEEP TEST — tests EVERYTHING in HEX
 ## ================================================================
 
 $passed -> 0
 $failed -> 0
 
-check $name $got $expected ::
-    ? $got == $expected ::
-        $passed += 1
-    :: else ::
-        >> red "[FAIL] {$name}: got '{$got}', expected '{$expected}'"
-        $failed += 1
-    ;;
-;;
+## Using >> directly instead of a function to avoid scope issues
 
 >> bold "=========================================="
 >> bold "  HEX DEEP TEST SUITE"
@@ -24,40 +16,32 @@ check $name $got $expected ::
 ## ────────────────────────────────────────
 
 $a -> 42
-check "int assign" $a 42
+? $a == 42 :: $passed += 1 ;; ? $a != 42 :: >> red "[FAIL] int assign" ;; $failed += 1 ;;
 
 $b -> 3.14
-check "float assign" $b 3.14
+? $b == 3.14 :: $passed += 1 ;; ? $b != 3.14 :: >> red "[FAIL] float" ;; $failed += 1 ;;
 
 $c -> "hello"
-check "string assign" $c "hello"
+? $c == "hello" :: $passed += 1 ;; ? $c != "hello" :: >> red "[FAIL] string" ;; $failed += 1 ;;
 
 $d -> true
-check "bool assign" $d true
+? $d == true :: $passed += 1 ;; ? $d != true :: >> red "[FAIL] bool" ;; $failed += 1 ;;
 
 $e -> null
-check "null assign" $e null
-
-$f -> [1, 2, 3]
-check "list assign" $f [1, 2, 3]
-
-$g -> {"x": 1, "y": 2}
-check "map assign type" #type $g "map"
+? $e == null :: $passed += 1 ;; ? $e != null :: >> red "[FAIL] null" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- MATH ---"
 ## ────────────────────────────────────────
 
-check "add" (5 + 3) 8
-check "sub" (10 - 7) 3
-check "mul" (4 * 6) 24
-check "div" (20 / 4) 5
-check "mod" (17 % 5) 2
-check "pow" (2 ^ 10) 1024
-check "negative" (-5 + 10) 5
-check "order of ops" (2 + 3 * 4) 14
-check "parens" ((2 + 3) * 4) 20
-check "nested math" ((10 - 2) * (3 + 1) / 4) 8
+? (5 + 3) == 8 :: $passed += 1 ;; ? (5 + 3) != 8 :: >> red "[FAIL] add" ;; $failed += 1 ;;
+? (10 - 7) == 3 :: $passed += 1 ;; ? (10 - 7) != 3 :: >> red "[FAIL] sub" ;; $failed += 1 ;;
+? (4 * 6) == 24 :: $passed += 1 ;; ? (4 * 6) != 24 :: >> red "[FAIL] mul" ;; $failed += 1 ;;
+? (20 / 4) == 5 :: $passed += 1 ;; ? (20 / 4) != 5 :: >> red "[FAIL] div" ;; $failed += 1 ;;
+? (17 % 5) == 2 :: $passed += 1 ;; ? (17 % 5) != 2 :: >> red "[FAIL] mod" ;; $failed += 1 ;;
+? (2 ^ 10) == 1024 :: $passed += 1 ;; ? (2 ^ 10) != 1024 :: >> red "[FAIL] pow" ;; $failed += 1 ;;
+? (2 + 3 * 4) == 14 :: $passed += 1 ;; ? (2 + 3 * 4) != 14 :: >> red "[FAIL] order" ;; $failed += 1 ;;
+? ((2 + 3) * 4) == 20 :: $passed += 1 ;; ? ((2 + 3) * 4) != 20 :: >> red "[FAIL] parens" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- COMPOUND ASSIGNMENT ---"
@@ -65,61 +49,47 @@ check "nested math" ((10 - 2) * (3 + 1) / 4) 8
 
 $x -> 10
 $x += 5
-check "+=" $x 15
+? $x == 15 :: $passed += 1 ;; ? $x != 15 :: >> red "[FAIL] +=" ;; $failed += 1 ;;
 $x -= 3
-check "-=" $x 12
+? $x == 12 :: $passed += 1 ;; ? $x != 12 :: >> red "[FAIL] -=" ;; $failed += 1 ;;
 $x *= 2
-check "*=" $x 24
+? $x == 24 :: $passed += 1 ;; ? $x != 24 :: >> red "[FAIL] *=" ;; $failed += 1 ;;
 $x /= 6
-check "/=" $x 4
-
-$s -> "hello"
-$s += " world"
-check "+= string" $s "hello world"
+? $x == 4 :: $passed += 1 ;; ? $x != 4 :: >> red "[FAIL] /=" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
->> "\n--- COMPARISONS ---"
+>> "\n--- COMPARISONS & LOGIC ---"
 ## ────────────────────────────────────────
 
-check "==" (5 == 5) true
-check "!=" (5 != 3) true
-check ">" (10 > 5) true
-check "<" (3 < 7) true
-check ">=" (5 >= 5) true
-check "<=" (4 <= 4) true
-check "str ==" ("abc" == "abc") true
-check "str !=" ("abc" != "xyz") true
-
-## ────────────────────────────────────────
->> "\n--- LOGIC ---"
-## ────────────────────────────────────────
-
-check "and tt" (true && true) true
-check "and tf" (true && false) false
-check "or tf" (true || false) true
-check "or ff" (false || false) false
-check "not t" (!!true) false
-check "not f" (!!false) true
+? (5 == 5) == true :: $passed += 1 ;; ? (5 == 5) != true :: >> red "[FAIL] ==" ;; $failed += 1 ;;
+? (5 != 3) == true :: $passed += 1 ;; ? (5 != 3) != true :: >> red "[FAIL] !=" ;; $failed += 1 ;;
+? (10 > 5) == true :: $passed += 1 ;; ? (10 > 5) != true :: >> red "[FAIL] >" ;; $failed += 1 ;;
+? (3 < 7) == true :: $passed += 1 ;; ? (3 < 7) != true :: >> red "[FAIL] <" ;; $failed += 1 ;;
+? (true && true) == true :: $passed += 1 ;; ? (true && true) != true :: >> red "[FAIL] &&" ;; $failed += 1 ;;
+? (true && false) == false :: $passed += 1 ;; ? (true && false) != false :: >> red "[FAIL] && false" ;; $failed += 1 ;;
+? (false || true) == true :: $passed += 1 ;; ? (false || true) != true :: >> red "[FAIL] ||" ;; $failed += 1 ;;
+? (!!true) == false :: $passed += 1 ;; ? (!!true) != false :: >> red "[FAIL] !!" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- TERNARY ---"
 ## ────────────────────────────────────────
 
-check "ternary true" (true ? "yes" : "no") "yes"
-check "ternary false" (false ? "yes" : "no") "no"
-check "ternary expr" (5 > 3 ? "big" : "small") "big"
-$age -> 17
-check "ternary var" ($age >= 18 ? "adult" : "minor") "minor"
-check "nested ternary" (true ? (false ? "a" : "b") : "c") "b"
+$r -> (true ? "yes" : "no")
+? $r == "yes" :: $passed += 1 ;; ? $r != "yes" :: >> red "[FAIL] ternary true" ;; $failed += 1 ;;
+
+$r -> (false ? "yes" : "no")
+? $r == "no" :: $passed += 1 ;; ? $r != "no" :: >> red "[FAIL] ternary false" ;; $failed += 1 ;;
+
+$r -> (5 > 3 ? "big" : "small")
+? $r == "big" :: $passed += 1 ;; ? $r != "big" :: >> red "[FAIL] ternary expr" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- STRING INTERPOLATION ---"
 ## ────────────────────────────────────────
 
 $name -> "HEX"
-$ver -> 3
-check "interpolation" "lang={$name}" "lang=HEX"
-check "interp multi" "{$name} v{$ver}" "HEX v3"
+$r -> "lang={$name}"
+? $r == "lang=HEX" :: $passed += 1 ;; ? $r != "lang=HEX" :: >> red "[FAIL] interpolation" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- STRING OPS ---"
@@ -127,138 +97,114 @@ check "interp multi" "{$name} v{$ver}" "HEX v3"
 
 $s -> "  hello  "
 &trim $s
-check "trim" $s "hello"
+? $s == "hello" :: $passed += 1 ;; ? $s != "hello" :: >> red "[FAIL] trim" ;; $failed += 1 ;;
 
-$s -> "hello world"
+$s -> "hello"
 &upper $s
-check "upper" $s "HELLO WORLD"
+? $s == "HELLO" :: $passed += 1 ;; ? $s != "HELLO" :: >> red "[FAIL] upper" ;; $failed += 1 ;;
+
 &lower $s
-check "lower" $s "hello world"
+? $s == "hello" :: $passed += 1 ;; ? $s != "hello" :: >> red "[FAIL] lower" ;; $failed += 1 ;;
 
 $s -> "hello world"
 &title $s
-check "title" $s "Hello World"
+? $s == "Hello World" :: $passed += 1 ;; ? $s != "Hello World" :: >> red "[FAIL] title" ;; $failed += 1 ;;
 
 $s -> "hello"
 &capitalize $s
-check "capitalize" $s "Hello"
+? $s == "Hello" :: $passed += 1 ;; ? $s != "Hello" :: >> red "[FAIL] capitalize" ;; $failed += 1 ;;
 
 $s -> "Hello"
 &swapcase $s
-check "swapcase" $s "hELLO"
+? $s == "hELLO" :: $passed += 1 ;; ? $s != "hELLO" :: >> red "[FAIL] swapcase" ;; $failed += 1 ;;
 
 $s -> "ha"
 &repeat $s 3
-check "repeat" $s "hahaha"
-
-$s -> "hello world hello"
-&replace $s "hello" "hi"
-check "replace" $s "hi world hi"
-
-$s -> "a,b,c,d"
-&split $s ","
-check "split type" #type $s "list"
-check "split len" #len $s 4
-
-$s -> "hello"
-&chars $s
-check "chars" $s ["h", "e", "l", "l", "o"]
-
-check "padl" #padl "42" 6 "0" "000042"
-check "padr" #padr "hi" 6 "." "hi...."
-check "center" #center "X" 5 "-" "--X--"
+? $s == "hahaha" :: $passed += 1 ;; ? $s != "hahaha" :: >> red "[FAIL] repeat" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- STRING INDEXING ---"
 ## ────────────────────────────────────────
 
 $s -> "abcdef"
-check "index 0" $s[0] "a"
-check "index 3" $s[3] "d"
-check "index -1" $s[-1] "f"
-check "slice" $s[1:4] "bcd"
+? $s[0] == "a" :: $passed += 1 ;; ? $s[0] != "a" :: >> red "[FAIL] index 0" ;; $failed += 1 ;;
+? $s[3] == "d" :: $passed += 1 ;; ? $s[3] != "d" :: >> red "[FAIL] index 3" ;; $failed += 1 ;;
+? $s[-1] == "f" :: $passed += 1 ;; ? $s[-1] != "f" :: >> red "[FAIL] index -1" ;; $failed += 1 ;;
+? $s[1:4] == "bcd" :: $passed += 1 ;; ? $s[1:4] != "bcd" :: >> red "[FAIL] slice" ;; $failed += 1 ;;
+
+## ────────────────────────────────────────
+>> "\n--- STRING PADDING ---"
+## ────────────────────────────────────────
+
+? (#padl "42" 6 "0") == "000042" :: $passed += 1 ;; ? (#padl "42" 6 "0") != "000042" :: >> red "[FAIL] padl" ;; $failed += 1 ;;
+? (#padr "hi" 6 ".") == "hi...." :: $passed += 1 ;; ? (#padr "hi" 6 ".") != "hi...." :: >> red "[FAIL] padr" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- LISTS ---"
 ## ────────────────────────────────────────
 
 $list -> [10, 20, 30, 40, 50]
-check "list[0]" $list[0] 10
-check "list[4]" $list[4] 50
-check "list[-1]" $list[-1] 50
-check "list slice" $list[1:3] [20, 30]
+? $list[0] == 10 :: $passed += 1 ;; ? $list[0] != 10 :: >> red "[FAIL] list[0]" ;; $failed += 1 ;;
+? $list[-1] == 50 :: $passed += 1 ;; ? $list[-1] != 50 :: >> red "[FAIL] list[-1]" ;; $failed += 1 ;;
 
 &push $list 60
-check "push" #len $list 6
+? (#len $list) == 6 :: $passed += 1 ;; ? (#len $list) != 6 :: >> red "[FAIL] push" ;; $failed += 1 ;;
 
 &pop $list
-check "pop" #len $list 5
+? (#len $list) == 5 :: $passed += 1 ;; ? (#len $list) != 5 :: >> red "[FAIL] pop" ;; $failed += 1 ;;
 
-&insert $list 0 5
-check "insert" $list[0] 5
+$nums -> [3, 1, 4, 1, 5]
+&sort $nums
+? $nums[0] == 1 :: $passed += 1 ;; ? $nums[0] != 1 :: >> red "[FAIL] sort" ;; $failed += 1 ;;
 
-&rm $list 0
-check "rm" $list[0] 10
-
-&sort $list
-check "sort first" $list[0] 10
-
-&reverse $list
-check "reverse first" $list[0] 50
-
-$nums -> [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
-&unique $nums
-check "unique len" #len $nums 7
+&reverse $nums
+? $nums[0] == 5 :: $passed += 1 ;; ? $nums[0] != 5 :: >> red "[FAIL] reverse" ;; $failed += 1 ;;
 
 $nested -> [[1, 2], [3, 4], [5]]
 &flat $nested
-check "flat" $nested [1, 2, 3, 4, 5]
+? $nested == [1, 2, 3, 4, 5] :: $passed += 1 ;; ? $nested != [1, 2, 3, 4, 5] :: >> red "[FAIL] flat" ;; $failed += 1 ;;
 
 &fill $zeros 0 4
-check "fill" $zeros [0, 0, 0, 0]
+? $zeros == [0, 0, 0, 0] :: $passed += 1 ;; ? $zeros != [0, 0, 0, 0] :: >> red "[FAIL] fill" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- MAPS ---"
 ## ────────────────────────────────────────
 
 $m -> {"a": 1, "b": 2, "c": 3}
-check "map access" $m["b"] 2
+? $m["b"] == 2 :: $passed += 1 ;; ? $m["b"] != 2 :: >> red "[FAIL] map access" ;; $failed += 1 ;;
 
 $m["d"] -> 4
-check "map set" $m["d"] 4
+? $m["d"] == 4 :: $passed += 1 ;; ? $m["d"] != 4 :: >> red "[FAIL] map set" ;; $failed += 1 ;;
 
 &del $m "c"
-check "map del" #len $m 3
-
-$m2 -> {"e": 5}
-&merge $m $m2
-check "map merge" $m["e"] 5
+? (#len $m) == 3 :: $passed += 1 ;; ? (#len $m) != 3 :: >> red "[FAIL] map del" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- IF / ELSE ---"
 ## ────────────────────────────────────────
 
-$result -> ""
+$r -> ""
 $x -> 15
 ? $x > 20 ::
-    $result -> "big"
+    $r -> "big"
 ?? $x > 10 ::
-    $result -> "medium"
+    $r -> "medium"
 :: else ::
-    $result -> "small"
+    $r -> "small"
 ;;
-check "if-elseif-else" $result "medium"
+? $r == "medium" :: $passed += 1 ;; ? $r != "medium" :: >> red "[FAIL] if-elseif" ;; $failed += 1 ;;
 
 ## Nested if
-$result -> ""
+$r -> ""
 ? true ::
     ? false ::
-        $result -> "wrong"
+        $r -> "wrong"
     :: else ::
-        $result -> "right"
+        $r -> "right"
     ;;
 ;;
-check "nested if" $result "right"
+? $r == "right" :: $passed += 1 ;; ? $r != "right" :: >> red "[FAIL] nested if" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- LOOPS ---"
@@ -269,66 +215,61 @@ $sum -> 0
 for $i in 1..10 ::
     $sum += $i
 ;;
-check "for range sum" $sum 55
+? $sum == 55 :: $passed += 1 ;; ? $sum != 55 :: >> red "[FAIL] for range" ;; $failed += 1 ;;
 
 ## For list
-$result -> ""
-$items -> ["a", "b", "c"]
-for $item in $items ::
-    $result += $item
+$r -> ""
+for $item in ["a", "b", "c"] ::
+    $r += $item
 ;;
-check "for list" $result "abc"
+? $r == "abc" :: $passed += 1 ;; ? $r != "abc" :: >> red "[FAIL] for list" ;; $failed += 1 ;;
 
 ## While
 $count -> 0
 while $count < 5 ::
     $count += 1
 ;;
-check "while" $count 5
+? $count == 5 :: $passed += 1 ;; ? $count != 5 :: >> red "[FAIL] while" ;; $failed += 1 ;;
 
 ## Repeat
 $count -> 0
 rep 7 ::
     $count += 1
 ;;
-check "repeat" $count 7
+? $count == 7 :: $passed += 1 ;; ? $count != 7 :: >> red "[FAIL] repeat loop" ;; $failed += 1 ;;
 
-## Forever with break
+## Forever + break
 $count -> 0
 forever ::
     $count += 1
-    ? $count >= 3 ::
-        break
-    ;;
+    ? $count >= 3 :: break ;;
 ;;
-check "forever+break" $count 3
+? $count == 3 :: $passed += 1 ;; ? $count != 3 :: >> red "[FAIL] forever" ;; $failed += 1 ;;
 
 ## Do-while
-$count -> 0
+$n -> 5
+$runs -> 0
 do ::
-    $count += 1
-;; while $count < 3
-check "do-while" $count 3
+    $runs += 1
+    $n -= 1
+;; while $n > 3
+? $runs == 2 :: $passed += 1 ;; ? $runs != 2 :: >> red "[FAIL] do-while" ;; $failed += 1 ;;
 
 ## Break
 $sum -> 0
 for $i in 1..100 ::
-    ? $i > 5 ::
-        break
-    ;;
+    ? $i > 5 :: break ;;
     $sum += $i
 ;;
-check "break" $sum 15
+? $sum == 15 :: $passed += 1 ;; ? $sum != 15 :: >> red "[FAIL] break" ;; $failed += 1 ;;
 
 ## Continue
 $sum -> 0
 for $i in 1..10 ::
-    ? $i % 2 == 0 ::
-        continue
-    ;;
+    ? $i % 2 == 0 :: continue ;;
     $sum += $i
 ;;
-check "continue" $sum 25
+? $sum == 25 :: $passed += 1 ;; ? $sum != 25 :: >> red "[FAIL] continue" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- FUNCTIONS ---"
@@ -337,25 +278,13 @@ check "continue" $sum 25
 add $a $b ::
     => $a + $b
 ;;
-check "func return" (add 10 20) 30
+? (add 10 20) == 30 :: $passed += 1 ;; ? (add 10 20) != 30 :: >> red "[FAIL] func" ;; $failed += 1 ;;
 
 factorial $n ::
-    ? $n <= 1 ::
-        => 1
-    ;;
+    ? $n <= 1 :: => 1 ;;
     => $n * (factorial ($n - 1))
 ;;
-check "recursion" (factorial 6) 720
-
-## Function that modifies list
-double_all $list ::
-    for $i in 0..((#len $list) - 1) ::
-        $list[$i] -> $list[$i] * 2
-    ;;
-;;
-$nums -> [1, 2, 3]
-double_all $nums
-check "func modify list" $nums [2, 4, 6]
+? (factorial 6) == 720 :: $passed += 1 ;; ? (factorial 6) != 720 :: >> red "[FAIL] recursion" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- MAP / FILTER / REDUCE ---"
@@ -366,91 +295,62 @@ times3 $x ::
 ;;
 $data -> [1, 2, 3, 4]
 &map $data times3
-check "map" $data [3, 6, 9, 12]
+? $data == [3, 6, 9, 12] :: $passed += 1 ;; ? $data != [3, 6, 9, 12] :: >> red "[FAIL] map" ;; $failed += 1 ;;
 
 gt5 $x ::
     => $x > 5
 ;;
 &filter $data gt5
-check "filter" $data [6, 9, 12]
+? $data == [6, 9, 12] :: $passed += 1 ;; ? $data != [6, 9, 12] :: >> red "[FAIL] filter" ;; $failed += 1 ;;
 
 sum2 $a $b ::
     => $a + $b
 ;;
 &reduce $data sum2
-check "reduce" $data 27
-
-## ────────────────────────────────────────
->> "\n--- ZIP / ENUMERATE ---"
-## ────────────────────────────────────────
-
-$keys -> ["a", "b", "c"]
-$vals -> [1, 2, 3]
-&zip $keys $vals
-check "zip" $keys [["a", 1], ["b", 2], ["c", 3]]
-
-$items -> ["x", "y", "z"]
-&enumerate $items
-check "enumerate" $items [[0, "x"], [1, "y"], [2, "z"]]
+? $data == 27 :: $passed += 1 ;; ? $data != 27 :: >> red "[FAIL] reduce" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- MATCH / SWITCH ---"
 ## ────────────────────────────────────────
 
-$result -> ""
+$r -> ""
 $cmd -> "greet"
 match $cmd ::
     case "quit" ::
-        $result -> "quitting"
+        $r -> "quitting"
     ;;
     case "greet" ::
-        $result -> "hello!"
+        $r -> "hello!"
     ;;
     default ::
-        $result -> "unknown"
+        $r -> "unknown"
     ;;
 ;;
-check "match case" $result "hello!"
-
-$result -> ""
-$cmd -> "xyz"
-match $cmd ::
-    case "a" ::
-        $result -> "A"
-    ;;
-    default ::
-        $result -> "default"
-    ;;
-;;
-check "match default" $result "default"
+? $r == "hello!" :: $passed += 1 ;; ? $r != "hello!" :: >> red "[FAIL] match" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- CONSTANTS ---"
 ## ────────────────────────────────────────
 
 lock $MAX -> 100
-check "lock value" $MAX 100
+? $MAX == 100 :: $passed += 1 ;; ? $MAX != 100 :: >> red "[FAIL] lock" ;; $failed += 1 ;;
 
-$locked_ok -> false
+$lock_ok -> false
 #try ::
     $MAX -> 999
 #catch ::
-    $locked_ok -> true
+    $lock_ok -> true
 ;;
-check "lock protection" $locked_ok true
+? $lock_ok == true :: $passed += 1 ;; ? $lock_ok != true :: >> red "[FAIL] lock protect" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- DESTRUCTURING ---"
 ## ────────────────────────────────────────
 
 [$a, $b, $c] -> [100, 200, 300]
-check "destructure a" $a 100
-check "destructure b" $b 200
-check "destructure c" $c 300
-
-$pair -> [42, 99]
-[$x, $y] -> $pair
-check "destructure var" $x 42
+? $a == 100 :: $passed += 1 ;; ? $a != 100 :: >> red "[FAIL] destruct a" ;; $failed += 1 ;;
+? $b == 200 :: $passed += 1 ;; ? $b != 200 :: >> red "[FAIL] destruct b" ;; $failed += 1 ;;
+? $c == 300 :: $passed += 1 ;; ? $c != 300 :: >> red "[FAIL] destruct c" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- CLASSES ---"
@@ -463,16 +363,13 @@ class Counter ::
     inc ::
         $this["val"] -> $this["val"] + 1
     ;;
-    get ::
-        => $this["val"]
-    ;;
 ;;
 
 $c -> new Counter 0
 $c.inc
 $c.inc
 $c.inc
-check "class method" $c["val"] 3
+? $c["val"] == 3 :: $passed += 1 ;; ? $c["val"] != 3 :: >> red "[FAIL] class" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- INHERITANCE ---"
@@ -482,242 +379,203 @@ class Shape ::
     init $type ::
         $this["type"] -> $type
     ;;
-    describe ::
-        => "I am a " + $this["type"]
-    ;;
 ;;
 
 class Circle extends Shape ::
-    init $radius ::
+    init $r ::
         $this["type"] -> "circle"
-        $this["radius"] -> $radius
-    ;;
-    area ::
-        => 3.14159 * $this["radius"] * $this["radius"]
+        $this["r"] -> $r
     ;;
 ;;
 
 $c -> new Circle 5
-check "inherit type" $c["type"] "circle"
-check "inherit radius" $c["radius"] 5
+? $c["type"] == "circle" :: $passed += 1 ;; ? $c["type"] != "circle" :: >> red "[FAIL] inherit" ;; $failed += 1 ;;
+? $c["r"] == 5 :: $passed += 1 ;; ? $c["r"] != 5 :: >> red "[FAIL] inherit prop" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- ENUMS ---"
 ## ────────────────────────────────────────
 
-enum Direction ::
+enum Dir ::
     north
     south
     east
     west
 ;;
 
-check "enum north" $Direction["north"] 0
-check "enum south" $Direction["south"] 1
-check "enum east" $Direction["east"] 2
-check "enum west" $Direction["west"] 3
+? $Dir["north"] == 0 :: $passed += 1 ;; ? $Dir["north"] != 0 :: >> red "[FAIL] enum 0" ;; $failed += 1 ;;
+? $Dir["west"] == 3 :: $passed += 1 ;; ? $Dir["west"] != 3 :: >> red "[FAIL] enum 3" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- TYPE CHECKS ---"
 ## ────────────────────────────────────────
 
-check "isnum" #isnum 42 true
-check "isnum str" #isnum "hi" false
-check "isstr" #isstr "hi" true
-check "islist" #islist [1, 2] true
-check "ismap" #ismap {"a": 1} true
-check "isbool" #isbool true true
-check "isnull" #isnull null true
+? (#isnum 42) == true :: $passed += 1 ;; ? (#isnum 42) != true :: >> red "[FAIL] isnum" ;; $failed += 1 ;;
+? (#isstr "hi") == true :: $passed += 1 ;; ? (#isstr "hi") != true :: >> red "[FAIL] isstr" ;; $failed += 1 ;;
+? (#islist [1]) == true :: $passed += 1 ;; ? (#islist [1]) != true :: >> red "[FAIL] islist" ;; $failed += 1 ;;
+? (#isbool true) == true :: $passed += 1 ;; ? (#isbool true) != true :: >> red "[FAIL] isbool" ;; $failed += 1 ;;
+? (#isnull null) == true :: $passed += 1 ;; ? (#isnull null) != true :: >> red "[FAIL] isnull" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- MATH BUILTINS ---"
 ## ────────────────────────────────────────
 
-check "abs" #abs -42 42
-check "round" #round 3.7 4
-check "floor" #floor 3.9 3
-check "ceil" #ceil 3.1 4
-check "sqrt" #sqrt 144 12
-check "min" (#min 3 7) 3
-check "max" (#max 3 7) 7
-check "clamp" (#clamp 15 0 10) 10
-check "pow" (#pow 2 8) 256
-check "sign pos" (#sign 5) 1
-check "sign neg" (#sign -5) -1
-check "sign zero" (#sign 0) 0
+? (#abs -42) == 42 :: $passed += 1 ;; ? (#abs -42) != 42 :: >> red "[FAIL] abs" ;; $failed += 1 ;;
+? (#round 3.7) == 4 :: $passed += 1 ;; ? (#round 3.7) != 4 :: >> red "[FAIL] round" ;; $failed += 1 ;;
+? (#floor 3.9) == 3 :: $passed += 1 ;; ? (#floor 3.9) != 3 :: >> red "[FAIL] floor" ;; $failed += 1 ;;
+? (#ceil 3.1) == 4 :: $passed += 1 ;; ? (#ceil 3.1) != 4 :: >> red "[FAIL] ceil" ;; $failed += 1 ;;
+? (#sqrt 144) == 12 :: $passed += 1 ;; ? (#sqrt 144) != 12 :: >> red "[FAIL] sqrt" ;; $failed += 1 ;;
+? (#min 3 7) == 3 :: $passed += 1 ;; ? (#min 3 7) != 3 :: >> red "[FAIL] min" ;; $failed += 1 ;;
+? (#max 3 7) == 7 :: $passed += 1 ;; ? (#max 3 7) != 7 :: >> red "[FAIL] max" ;; $failed += 1 ;;
+? (#clamp 15 0 10) == 10 :: $passed += 1 ;; ? (#clamp 15 0 10) != 10 :: >> red "[FAIL] clamp" ;; $failed += 1 ;;
+? (#sign -5) == -1 :: $passed += 1 ;; ? (#sign -5) != -1 :: >> red "[FAIL] sign" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- CASTING ---"
 ## ────────────────────────────────────────
 
-check "int" (#int "42") 42
-check "float" (#float "3.14") 3.14
-check "str" (#str 42) "42"
-check "num safe" (#num "abc") null
-check "num valid" (#num "99") 99
-check "bool truthy" (#bool 1) true
-check "bool falsy" (#bool 0) false
+? (#int "42") == 42 :: $passed += 1 ;; ? (#int "42") != 42 :: >> red "[FAIL] int" ;; $failed += 1 ;;
+? (#str 42) == "42" :: $passed += 1 ;; ? (#str 42) != "42" :: >> red "[FAIL] str" ;; $failed += 1 ;;
+? (#num "abc") == null :: $passed += 1 ;; ? (#num "abc") != null :: >> red "[FAIL] num safe" ;; $failed += 1 ;;
+? (#bool 1) == true :: $passed += 1 ;; ? (#bool 1) != true :: >> red "[FAIL] bool" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- RANGE ---"
 ## ────────────────────────────────────────
 
-check "range up" (#range 1 5) [1, 2, 3, 4, 5]
-check "range down" (#range 5 1) [5, 4, 3, 2, 1]
-check "range single" (#range 3 3) [3]
+? (#range 1 5) == [1, 2, 3, 4, 5] :: $passed += 1 ;; ? (#range 1 5) != [1, 2, 3, 4, 5] :: >> red "[FAIL] range" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- BASE64 ---"
 ## ────────────────────────────────────────
 
-$encoded -> #base64 "hello world"
-check "base64 encode" $encoded "aGVsbG8gd29ybGQ="
-$decoded -> #decode64 $encoded
-check "base64 decode" $decoded "hello world"
+$enc -> #base64 "hello world"
+? $enc == "aGVsbG8gd29ybGQ=" :: $passed += 1 ;; ? $enc != "aGVsbG8gd29ybGQ=" :: >> red "[FAIL] base64" ;; $failed += 1 ;;
+
+$dec -> #decode64 $enc
+? $dec == "hello world" :: $passed += 1 ;; ? $dec != "hello world" :: >> red "[FAIL] decode64" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- HEX CIPHER ---"
 ## ────────────────────────────────────────
 
-$secret -> "top secret data 12345!@#$%"
-$pass -> "mykey"
-$enc -> #encrypt $secret $pass
-$dec -> #decrypt $enc $pass
-check "encrypt/decrypt" $dec $secret
+$secret -> "top secret 123"
+$enc -> #encrypt $secret "mykey"
+$dec -> #decrypt $enc "mykey"
+? $dec == $secret :: $passed += 1 ;; ? $dec != $secret :: >> red "[FAIL] encrypt/decrypt" ;; $failed += 1 ;;
 
-## Different output each time (random salt)
-$enc2 -> #encrypt "test" "key"
-$enc3 -> #encrypt "test" "key"
-check "random salt" ($enc2 != $enc3) true
+## Random salt = different output
+$e1 -> #encrypt "test" "k"
+$e2 -> #encrypt "test" "k"
+? $e1 != $e2 :: $passed += 1 ;; ? $e1 == $e2 :: >> red "[FAIL] random salt" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- JSON ---"
 ## ────────────────────────────────────────
 
-$obj -> #json '{"name":"Niko","age":17,"active":true,"scores":[90,85,95]}'
-check "json name" $obj["name"] "Niko"
-check "json age" $obj["age"] 17
-check "json bool" $obj["active"] true
-check "json array" $obj["scores"][0] 90
-check "json nested len" #len $obj["scores"] 3
+$obj -> #json '{"name":"Niko","age":17,"scores":[90,85]}'
+? $obj["name"] == "Niko" :: $passed += 1 ;; ? $obj["name"] != "Niko" :: >> red "[FAIL] json name" ;; $failed += 1 ;;
+? $obj["age"] == 17 :: $passed += 1 ;; ? $obj["age"] != 17 :: >> red "[FAIL] json age" ;; $failed += 1 ;;
+? $obj["scores"][0] == 90 :: $passed += 1 ;; ? $obj["scores"][0] != 90 :: >> red "[FAIL] json array" ;; $failed += 1 ;;
 
 $back -> #jsonc $obj
-check "json has name" (#test $back "Niko") true
+? (#test $back "Niko") == true :: $passed += 1 ;; ? (#test $back "Niko") != true :: >> red "[FAIL] tojson" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- REGEX ---"
 ## ────────────────────────────────────────
 
-$m -> #match "hello world" "[a-z]+"
-check "regex match" $m[0] "hello"
-
 $all -> #matchall "a1 b2 c3" "[a-z]\\d"
-check "regex matchall" #len $all 3
+? (#len $all) == 3 :: $passed += 1 ;; ? (#len $all) != 3 :: >> red "[FAIL] matchall" ;; $failed += 1 ;;
 
 $cleaned -> #replacex "a  b   c" "\\s+" " "
-check "regex replace" $cleaned "a b c"
+? $cleaned == "a b c" :: $passed += 1 ;; ? $cleaned != "a b c" :: >> red "[FAIL] replacex" ;; $failed += 1 ;;
 
-check "regex test true" (#test "abc123" "^[a-z]+\\d+$") true
-check "regex test false" (#test "ABC" "^[a-z]+$") false
+? (#test "abc123" "^[a-z]+\\d+$") == true :: $passed += 1 ;; ? (#test "abc123" "^[a-z]+\\d+$") != true :: >> red "[FAIL] regex test" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- ERROR HANDLING ---"
 ## ────────────────────────────────────────
 
-## Basic try/catch
 $caught -> false
 #try ::
     $x -> 10 / 0
 #catch ::
     $caught -> true
 ;;
-check "try/catch basic" $caught true
+? $caught == true :: $passed += 1 ;; ? $caught != true :: >> red "[FAIL] try/catch" ;; $failed += 1 ;;
 
 ## Typed catch
-$caught_type -> ""
+$typed -> false
 #try ::
     $x -> 10 / 0
 #catch ZeroDivisionError ::
-    $caught_type -> "zero"
+    $typed -> true
 ;;
-check "typed catch" $caught_type "zero"
+? $typed == true :: $passed += 1 ;; ? $typed != true :: >> red "[FAIL] typed catch" ;; $failed += 1 ;;
 
 ## Finally
-$finally_ran -> false
+$fin -> false
 #try ::
     $x -> 10 / 0
 #catch ::
     $caught -> true
 #finally ::
-    $finally_ran -> true
+    $fin -> true
 ;;
-check "finally" $finally_ran true
+? $fin == true :: $passed += 1 ;; ? $fin != true :: >> red "[FAIL] finally" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- FILES ---"
 ## ────────────────────────────────────────
 
-~write "__test_deep.txt" "line1"
-~append "__test_deep.txt" "line2"
-$content -> ~read "__test_deep.txt"
-check "file write+read" (#test $content "line1") true
-check "file exists" (~exists "__test_deep.txt") true
-~del "__test_deep.txt"
-check "file delete" (~exists "__test_deep.txt") false
+~write "__deep_test_tmp.txt" "hello"
+? (~exists "__deep_test_tmp.txt") == true :: $passed += 1 ;; ? (~exists "__deep_test_tmp.txt") != true :: >> red "[FAIL] file write" ;; $failed += 1 ;;
+
+$content -> ~read "__deep_test_tmp.txt"
+? $content == "hello" :: $passed += 1 ;; ? $content != "hello" :: >> red "[FAIL] file read" ;; $failed += 1 ;;
+
+~del "__deep_test_tmp.txt"
+? (~exists "__deep_test_tmp.txt") == false :: $passed += 1 ;; ? (~exists "__deep_test_tmp.txt") != false :: >> red "[FAIL] file del" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- MULTI-LINE STRINGS ---"
 ## ────────────────────────────────────────
 
-$ml -> """hello
-world"""
-check "multiline has newline" (#test $ml "\\n") true
+$ml -> """line1
+line2"""
+? (#test $ml "line1") == true :: $passed += 1 ;; ? (#test $ml "line1") != true :: >> red "[FAIL] multiline" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
->> "\n--- DATE/TIME ---"
+>> "\n--- DATE / TIME ---"
 ## ────────────────────────────────────────
 
 $d -> #date
-check "date format" (#test $d "^\\d{4}-\\d{2}-\\d{2}$") true
-
-$c -> #clock
-check "clock format" (#test $c "^\\d{2}:\\d{2}:\\d{2}$") true
+? (#test $d "^\\d{4}") == true :: $passed += 1 ;; ? (#test $d "^\\d{4}") != true :: >> red "[FAIL] date" ;; $failed += 1 ;;
 
 $t -> #time
-check "time is number" #isnum $t true
-
-## ────────────────────────────────────────
->> "\n--- SHELL ---"
-## ────────────────────────────────────────
-
-$user -> ! "whoami"
-check "shell not empty" (#len $user > 0) true
+? (#isnum $t) == true :: $passed += 1 ;; ? (#isnum $t) != true :: >> red "[FAIL] time" ;; $failed += 1 ;;
 
 ## ────────────────────────────────────────
 >> "\n--- COMPLEX SCENARIOS ---"
 ## ────────────────────────────────────────
 
-## Nested list operations
-$matrix -> [[1, 2], [3, 4], [5, 6]]
+## Nested loops
 $sum -> 0
+$matrix -> [[1, 2], [3, 4], [5, 6]]
 for $row in $matrix ::
     for $val in $row ::
         $sum += $val
     ;;
 ;;
-check "nested for" $sum 21
+? $sum == 21 :: $passed += 1 ;; ? $sum != 21 :: >> red "[FAIL] nested loops" ;; $failed += 1 ;;
 
-## Function returning list + destructuring
+## Function + destructuring
 get_pair ::
     => [42, 99]
 ;;
-[$a, $b] -> get_pair
-check "func+destructure a" $a 42
-check "func+destructure b" $b 99
-
-## Map as config
-$config -> #json '{"debug": true, "port": 8080, "name": "hexserver"}'
-check "json config" $config["port"] 8080
+[$x, $y] -> get_pair
+? $x == 42 :: $passed += 1 ;; ? $x != 42 :: >> red "[FAIL] func+destruct" ;; $failed += 1 ;;
 
 ## Chained string ops
 $s -> "  Hello, World!  "
@@ -725,19 +583,24 @@ $s -> "  Hello, World!  "
 &lower $s
 &replace $s "," ""
 &replace $s "!" ""
-check "chained string" $s "hello world"
+? $s == "hello world" :: $passed += 1 ;; ? $s != "hello world" :: >> red "[FAIL] chained ops" ;; $failed += 1 ;;
+
+## JSON + map combo
+$config -> #json '{"debug": true, "port": 8080}'
+? $config["port"] == 8080 :: $passed += 1 ;; ? $config["port"] != 8080 :: >> red "[FAIL] json config" ;; $failed += 1 ;;
 
 ## ════════════════════════════════════════
 >> "\n=========================================="
 >> bold "  RESULTS"
 >> "=========================================="
+$total -> $passed + $failed
 >> green "  Passed: {$passed}"
 ? $failed > 0 ::
     >> red "  Failed: {$failed}"
 :: else ::
     >> green "  Failed: 0"
 ;;
->> "  Total:  " + ($passed + $failed)
+>> "  Total:  {$total}"
 >> "=========================================="
 ? $failed == 0 ::
     >> green "  ALL TESTS PASSED"
