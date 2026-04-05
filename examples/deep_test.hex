@@ -9,159 +9,424 @@ $failed -> 0
 >> bold "  HEX DEEP TEST SUITE"
 >> bold "=========================================="
 
-## ── VARIABLES & TYPES ──
 >> "\n--- VARIABLES & TYPES ---"
 
 $a -> 42
-? $a == 42 :: $passed += 1 :: else :: >> red "[FAIL] int assign" ;; $failed += 1 ;;
+? $a == 42 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] int assign"
+    $failed += 1
+;;
 
 $b -> 3.14
-? $b == 3.14 :: $passed += 1 :: else :: >> red "[FAIL] float" ;; $failed += 1 ;;
+? $b == 3.14 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] float"
+    $failed += 1
+;;
 
 $c -> "hello"
-? $c == "hello" :: $passed += 1 :: else :: >> red "[FAIL] string" ;; $failed += 1 ;;
+? $c == "hello" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] string"
+    $failed += 1
+;;
 
 $d -> true
-? $d == true :: $passed += 1 :: else :: >> red "[FAIL] bool" ;; $failed += 1 ;;
+? $d == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] bool"
+    $failed += 1
+;;
 
-## ── MATH ──
 >> "\n--- MATH ---"
 
-? (5 + 3) == 8 :: $passed += 1 :: else :: >> red "[FAIL] add" ;; $failed += 1 ;;
-? (10 - 7) == 3 :: $passed += 1 :: else :: >> red "[FAIL] sub" ;; $failed += 1 ;;
-? (4 * 6) == 24 :: $passed += 1 :: else :: >> red "[FAIL] mul" ;; $failed += 1 ;;
-? (20 / 4) == 5 :: $passed += 1 :: else :: >> red "[FAIL] div" ;; $failed += 1 ;;
-? (17 % 5) == 2 :: $passed += 1 :: else :: >> red "[FAIL] mod" ;; $failed += 1 ;;
-? (2 ^ 10) == 1024 :: $passed += 1 :: else :: >> red "[FAIL] pow" ;; $failed += 1 ;;
-? (2 + 3 * 4) == 14 :: $passed += 1 :: else :: >> red "[FAIL] order of ops" ;; $failed += 1 ;;
-? ((2 + 3) * 4) == 20 :: $passed += 1 :: else :: >> red "[FAIL] parens" ;; $failed += 1 ;;
+? (5 + 3) == 8 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] add"
+    $failed += 1
+;;
 
-## ── COMPOUND ASSIGNMENT ──
+? (10 - 7) == 3 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] sub"
+    $failed += 1
+;;
+
+? (4 * 6) == 24 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] mul"
+    $failed += 1
+;;
+
+? (20 / 4) == 5 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] div"
+    $failed += 1
+;;
+
+? (17 % 5) == 2 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] mod"
+    $failed += 1
+;;
+
+? (2 ^ 10) == 1024 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] pow"
+    $failed += 1
+;;
+
+? (2 + 3 * 4) == 14 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] order of ops"
+    $failed += 1
+;;
+
+? ((2 + 3) * 4) == 20 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] parens"
+    $failed += 1
+;;
+
 >> "\n--- COMPOUND ASSIGNMENT ---"
 
 $x -> 10
 $x += 5
-? $x == 15 :: $passed += 1 :: else :: >> red "[FAIL] +=" ;; $failed += 1 ;;
-$x -= 3
-? $x == 12 :: $passed += 1 :: else :: >> red "[FAIL] -=" ;; $failed += 1 ;;
-$x *= 2
-? $x == 24 :: $passed += 1 :: else :: >> red "[FAIL] *=" ;; $failed += 1 ;;
-$x /= 6
-? $x == 4 :: $passed += 1 :: else :: >> red "[FAIL] /=" ;; $failed += 1 ;;
+? $x == 15 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] +="
+    $failed += 1
+;;
 
-## ── COMPARISONS & LOGIC ──
+$x -= 3
+? $x == 12 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] -="
+    $failed += 1
+;;
+
+$x *= 2
+? $x == 24 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] *="
+    $failed += 1
+;;
+
+$x /= 6
+? $x == 4 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] /="
+    $failed += 1
+;;
+
 >> "\n--- COMPARISONS & LOGIC ---"
 
-? (5 == 5) == true :: $passed += 1 :: else :: >> red "[FAIL] ==" ;; $failed += 1 ;;
-? (5 != 3) == true :: $passed += 1 :: else :: >> red "[FAIL] !=" ;; $failed += 1 ;;
-? (10 > 5) == true :: $passed += 1 :: else :: >> red "[FAIL] >" ;; $failed += 1 ;;
-? (3 < 7) == true :: $passed += 1 :: else :: >> red "[FAIL] <" ;; $failed += 1 ;;
-? (true && true) == true :: $passed += 1 :: else :: >> red "[FAIL] &&" ;; $failed += 1 ;;
-? (true && false) == false :: $passed += 1 :: else :: >> red "[FAIL] && false" ;; $failed += 1 ;;
-? (false || true) == true :: $passed += 1 :: else :: >> red "[FAIL] ||" ;; $failed += 1 ;;
-? (!!true) == false :: $passed += 1 :: else :: >> red "[FAIL] !!" ;; $failed += 1 ;;
+? (5 == 5) == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] =="
+    $failed += 1
+;;
 
-## ── TERNARY ──
+? (5 != 3) == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] !="
+    $failed += 1
+;;
+
+? (10 > 5) == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] >"
+    $failed += 1
+;;
+
+? (3 < 7) == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] <"
+    $failed += 1
+;;
+
+? (true && true) == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] &&"
+    $failed += 1
+;;
+
+? (true && false) == false ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] && false"
+    $failed += 1
+;;
+
+? (false || true) == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] ||"
+    $failed += 1
+;;
+
+? (!!true) == false ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] !!"
+    $failed += 1
+;;
+
 >> "\n--- TERNARY ---"
 
 $r -> (true ? "yes" : "no")
-? $r == "yes" :: $passed += 1 :: else :: >> red "[FAIL] ternary true" ;; $failed += 1 ;;
+? $r == "yes" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] ternary true"
+    $failed += 1
+;;
 
 $r -> (false ? "yes" : "no")
-? $r == "no" :: $passed += 1 :: else :: >> red "[FAIL] ternary false" ;; $failed += 1 ;;
+? $r == "no" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] ternary false"
+    $failed += 1
+;;
 
 $r -> (5 > 3 ? "big" : "small")
-? $r == "big" :: $passed += 1 :: else :: >> red "[FAIL] ternary expr" ;; $failed += 1 ;;
+? $r == "big" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] ternary expr"
+    $failed += 1
+;;
 
-## ── STRING INTERPOLATION ──
 >> "\n--- STRING INTERPOLATION ---"
 
 $name -> "HEX"
 $r -> "lang={$name}"
-? $r == "lang=HEX" :: $passed += 1 :: else :: >> red "[FAIL] interpolation" ;; $failed += 1 ;;
+? $r == "lang=HEX" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] interpolation"
+    $failed += 1
+;;
 
-## ── STRING OPS ──
 >> "\n--- STRING OPS ---"
 
 $s -> "  hello  "
 &trim $s
-? $s == "hello" :: $passed += 1 :: else :: >> red "[FAIL] trim" ;; $failed += 1 ;;
+? $s == "hello" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] trim"
+    $failed += 1
+;;
 
 $s -> "hello"
 &upper $s
-? $s == "HELLO" :: $passed += 1 :: else :: >> red "[FAIL] upper" ;; $failed += 1 ;;
+? $s == "HELLO" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] upper"
+    $failed += 1
+;;
 
 &lower $s
-? $s == "hello" :: $passed += 1 :: else :: >> red "[FAIL] lower" ;; $failed += 1 ;;
+? $s == "hello" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] lower"
+    $failed += 1
+;;
 
 $s -> "hello world"
 &title $s
-? $s == "Hello World" :: $passed += 1 :: else :: >> red "[FAIL] title" ;; $failed += 1 ;;
+? $s == "Hello World" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] title"
+    $failed += 1
+;;
 
 $s -> "hello"
 &capitalize $s
-? $s == "Hello" :: $passed += 1 :: else :: >> red "[FAIL] capitalize" ;; $failed += 1 ;;
+? $s == "Hello" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] capitalize"
+    $failed += 1
+;;
 
 $s -> "Hello"
 &swapcase $s
-? $s == "hELLO" :: $passed += 1 :: else :: >> red "[FAIL] swapcase" ;; $failed += 1 ;;
+? $s == "hELLO" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] swapcase"
+    $failed += 1
+;;
 
 $s -> "ha"
 &repeat $s 3
-? $s == "hahaha" :: $passed += 1 :: else :: >> red "[FAIL] repeat" ;; $failed += 1 ;;
+? $s == "hahaha" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] repeat"
+    $failed += 1
+;;
 
-## ── STRING INDEXING ──
 >> "\n--- STRING INDEXING ---"
 
 $s -> "abcdef"
-? $s[0] == "a" :: $passed += 1 :: else :: >> red "[FAIL] index 0" ;; $failed += 1 ;;
-? $s[3] == "d" :: $passed += 1 :: else :: >> red "[FAIL] index 3" ;; $failed += 1 ;;
-? $s[-1] == "f" :: $passed += 1 :: else :: >> red "[FAIL] index -1" ;; $failed += 1 ;;
-? $s[1:4] == "bcd" :: $passed += 1 :: else :: >> red "[FAIL] slice" ;; $failed += 1 ;;
+? $s[0] == "a" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] index 0"
+    $failed += 1
+;;
 
-## ── STRING PADDING ──
+? $s[3] == "d" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] index 3"
+    $failed += 1
+;;
+
+? $s[-1] == "f" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] index -1"
+    $failed += 1
+;;
+
+? $s[1:4] == "bcd" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] slice"
+    $failed += 1
+;;
+
 >> "\n--- STRING PADDING ---"
 
-? (#padl "42" 6 "0") == "000042" :: $passed += 1 :: else :: >> red "[FAIL] padl" ;; $failed += 1 ;;
-? (#padr "hi" 6 ".") == "hi...." :: $passed += 1 :: else :: >> red "[FAIL] padr" ;; $failed += 1 ;;
+? (#padl "42" 6 "0") == "000042" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] padl"
+    $failed += 1
+;;
 
-## ── LISTS ──
+? (#padr "hi" 6 ".") == "hi...." ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] padr"
+    $failed += 1
+;;
+
 >> "\n--- LISTS ---"
 
 $list -> [10, 20, 30, 40, 50]
-? $list[0] == 10 :: $passed += 1 :: else :: >> red "[FAIL] list[0]" ;; $failed += 1 ;;
-? $list[-1] == 50 :: $passed += 1 :: else :: >> red "[FAIL] list[-1]" ;; $failed += 1 ;;
+? $list[0] == 10 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] list[0]"
+    $failed += 1
+;;
+
+? $list[-1] == 50 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] list[-1]"
+    $failed += 1
+;;
 
 &push $list 60
-? (#len $list) == 6 :: $passed += 1 :: else :: >> red "[FAIL] push" ;; $failed += 1 ;;
+? (#len $list) == 6 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] push"
+    $failed += 1
+;;
 
 &pop $list
-? (#len $list) == 5 :: $passed += 1 :: else :: >> red "[FAIL] pop" ;; $failed += 1 ;;
+? (#len $list) == 5 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] pop"
+    $failed += 1
+;;
 
 $nums -> [3, 1, 4, 1, 5]
 &sort $nums
-? $nums[0] == 1 :: $passed += 1 :: else :: >> red "[FAIL] sort" ;; $failed += 1 ;;
+? $nums[0] == 1 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] sort"
+    $failed += 1
+;;
 
 &reverse $nums
-? $nums[0] == 5 :: $passed += 1 :: else :: >> red "[FAIL] reverse" ;; $failed += 1 ;;
+? $nums[0] == 5 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] reverse"
+    $failed += 1
+;;
 
 $nested -> [[1, 2], [3, 4], [5]]
 &flat $nested
-? (#len $nested) == 5 :: $passed += 1 :: else :: >> red "[FAIL] flat" ;; $failed += 1 ;;
+? (#len $nested) == 5 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] flat"
+    $failed += 1
+;;
 
 &fill $zeros 0 4
-? (#len $zeros) == 4 :: $passed += 1 :: else :: >> red "[FAIL] fill" ;; $failed += 1 ;;
+? (#len $zeros) == 4 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] fill"
+    $failed += 1
+;;
 
-## ── MAPS ──
 >> "\n--- MAPS ---"
 
 $m -> {"a": 1, "b": 2, "c": 3}
-? $m["b"] == 2 :: $passed += 1 :: else :: >> red "[FAIL] map access" ;; $failed += 1 ;;
+? $m["b"] == 2 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] map access"
+    $failed += 1
+;;
 
 $m["d"] -> 4
-? $m["d"] == 4 :: $passed += 1 :: else :: >> red "[FAIL] map set" ;; $failed += 1 ;;
+? $m["d"] == 4 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] map set"
+    $failed += 1
+;;
 
-## ── IF / ELSE ──
 >> "\n--- IF / ELSE ---"
 
 $r -> ""
@@ -173,7 +438,12 @@ $x -> 15
 :: else ::
     $r -> "small"
 ;;
-? $r == "medium" :: $passed += 1 :: else :: >> red "[FAIL] if-elseif" ;; $failed += 1 ;;
+? $r == "medium" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] if-elseif"
+    $failed += 1
+;;
 
 $r -> ""
 ? true ::
@@ -183,41 +453,72 @@ $r -> ""
         $r -> "right"
     ;;
 ;;
-? $r == "right" :: $passed += 1 :: else :: >> red "[FAIL] nested if" ;; $failed += 1 ;;
+? $r == "right" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] nested if"
+    $failed += 1
+;;
 
-## ── LOOPS ──
 >> "\n--- LOOPS ---"
 
 $sum -> 0
 for $i in 1..10 ::
     $sum += $i
 ;;
-? $sum == 55 :: $passed += 1 :: else :: >> red "[FAIL] for range" ;; $failed += 1 ;;
+? $sum == 55 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] for range"
+    $failed += 1
+;;
 
 $r -> ""
 for $item in ["a", "b", "c"] ::
     $r += $item
 ;;
-? $r == "abc" :: $passed += 1 :: else :: >> red "[FAIL] for list" ;; $failed += 1 ;;
+? $r == "abc" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] for list"
+    $failed += 1
+;;
 
 $count -> 0
 while $count < 5 ::
     $count += 1
 ;;
-? $count == 5 :: $passed += 1 :: else :: >> red "[FAIL] while" ;; $failed += 1 ;;
+? $count == 5 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] while"
+    $failed += 1
+;;
 
 $count -> 0
 rep 7 ::
     $count += 1
 ;;
-? $count == 7 :: $passed += 1 :: else :: >> red "[FAIL] repeat" ;; $failed += 1 ;;
+? $count == 7 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] repeat"
+    $failed += 1
+;;
 
 $count -> 0
 forever ::
     $count += 1
-    ? $count >= 3 :: break ;;
+    ? $count >= 3 ::
+        break
+    ;;
 ;;
-? $count == 3 :: $passed += 1 :: else :: >> red "[FAIL] forever" ;; $failed += 1 ;;
+? $count == 3 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] forever"
+    $failed += 1
+;;
 
 $n -> 5
 $runs -> 0
@@ -225,37 +526,66 @@ do ::
     $runs += 1
     $n -= 1
 ;; while $n > 3
-? $runs == 2 :: $passed += 1 :: else :: >> red "[FAIL] do-while" ;; $failed += 1 ;;
+? $runs == 2 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] do-while"
+    $failed += 1
+;;
 
 $sum -> 0
 for $i in 1..100 ::
-    ? $i > 5 :: break ;;
+    ? $i > 5 ::
+        break
+    ;;
     $sum += $i
 ;;
-? $sum == 15 :: $passed += 1 :: else :: >> red "[FAIL] break" ;; $failed += 1 ;;
+? $sum == 15 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] break"
+    $failed += 1
+;;
 
 $sum -> 0
 for $i in 1..10 ::
-    ? $i % 2 == 0 :: continue ;;
+    ? $i % 2 == 0 ::
+        continue
+    ;;
     $sum += $i
 ;;
-? $sum == 25 :: $passed += 1 :: else :: >> red "[FAIL] continue" ;; $failed += 1 ;;
+? $sum == 25 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] continue"
+    $failed += 1
+;;
 
-## ── FUNCTIONS ──
 >> "\n--- FUNCTIONS ---"
 
 add $a $b ::
     => $a + $b
 ;;
-? (add 10 20) == 30 :: $passed += 1 :: else :: >> red "[FAIL] func" ;; $failed += 1 ;;
+? (add 10 20) == 30 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] func"
+    $failed += 1
+;;
 
 factorial $n ::
-    ? $n <= 1 :: => 1 ;;
+    ? $n <= 1 ::
+        => 1
+    ;;
     => $n * (factorial ($n - 1))
 ;;
-? (factorial 6) == 720 :: $passed += 1 :: else :: >> red "[FAIL] recursion" ;; $failed += 1 ;;
+? (factorial 6) == 720 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] recursion"
+    $failed += 1
+;;
 
-## ── MAP / FILTER / REDUCE ──
 >> "\n--- MAP / FILTER / REDUCE ---"
 
 times3 $x ::
@@ -263,22 +593,35 @@ times3 $x ::
 ;;
 $data -> [1, 2, 3, 4]
 &map $data times3
-? $data[0] == 3 :: $passed += 1 :: else :: >> red "[FAIL] map" ;; $failed += 1 ;;
-? $data[3] == 12 :: $passed += 1 :: else :: >> red "[FAIL] map last" ;; $failed += 1 ;;
+? $data[0] == 3 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] map"
+    $failed += 1
+;;
 
 gt5 $x ::
     => $x > 5
 ;;
 &filter $data gt5
-? (#len $data) == 3 :: $passed += 1 :: else :: >> red "[FAIL] filter" ;; $failed += 1 ;;
+? (#len $data) == 3 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] filter"
+    $failed += 1
+;;
 
 sum2 $a $b ::
     => $a + $b
 ;;
 &reduce $data sum2
-? $data == 27 :: $passed += 1 :: else :: >> red "[FAIL] reduce" ;; $failed += 1 ;;
+? $data == 27 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] reduce"
+    $failed += 1
+;;
 
-## ── MATCH / SWITCH ──
 >> "\n--- MATCH / SWITCH ---"
 
 $r -> ""
@@ -294,13 +637,22 @@ match $cmd ::
         $r -> "unknown"
     ;;
 ;;
-? $r == "hello!" :: $passed += 1 :: else :: >> red "[FAIL] match" ;; $failed += 1 ;;
+? $r == "hello!" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] match"
+    $failed += 1
+;;
 
-## ── CONSTANTS ──
 >> "\n--- CONSTANTS ---"
 
 lock $MAX -> 100
-? $MAX == 100 :: $passed += 1 :: else :: >> red "[FAIL] lock" ;; $failed += 1 ;;
+? $MAX == 100 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] lock"
+    $failed += 1
+;;
 
 $lock_ok -> false
 #try ::
@@ -308,17 +660,37 @@ $lock_ok -> false
 #catch ::
     $lock_ok -> true
 ;;
-? $lock_ok == true :: $passed += 1 :: else :: >> red "[FAIL] lock protect" ;; $failed += 1 ;;
+? $lock_ok == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] lock protect"
+    $failed += 1
+;;
 
-## ── DESTRUCTURING ──
 >> "\n--- DESTRUCTURING ---"
 
 [$a, $b, $c] -> [100, 200, 300]
-? $a == 100 :: $passed += 1 :: else :: >> red "[FAIL] destruct a" ;; $failed += 1 ;;
-? $b == 200 :: $passed += 1 :: else :: >> red "[FAIL] destruct b" ;; $failed += 1 ;;
-? $c == 300 :: $passed += 1 :: else :: >> red "[FAIL] destruct c" ;; $failed += 1 ;;
+? $a == 100 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] destruct a"
+    $failed += 1
+;;
 
-## ── CLASSES ──
+? $b == 200 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] destruct b"
+    $failed += 1
+;;
+
+? $c == 300 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] destruct c"
+    $failed += 1
+;;
+
 >> "\n--- CLASSES ---"
 
 class Counter ::
@@ -334,9 +706,13 @@ $c -> new Counter 0
 $c.inc
 $c.inc
 $c.inc
-? $c["val"] == 3 :: $passed += 1 :: else :: >> red "[FAIL] class" ;; $failed += 1 ;;
+? $c["val"] == 3 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] class"
+    $failed += 1
+;;
 
-## ── INHERITANCE ──
 >> "\n--- INHERITANCE ---"
 
 class Shape ::
@@ -353,10 +729,20 @@ class Circle extends Shape ::
 ;;
 
 $c -> new Circle 5
-? $c["type"] == "circle" :: $passed += 1 :: else :: >> red "[FAIL] inherit" ;; $failed += 1 ;;
-? $c["r"] == 5 :: $passed += 1 :: else :: >> red "[FAIL] inherit prop" ;; $failed += 1 ;;
+? $c["type"] == "circle" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] inherit"
+    $failed += 1
+;;
 
-## ── ENUMS ──
+? $c["r"] == 5 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] inherit prop"
+    $failed += 1
+;;
+
 >> "\n--- ENUMS ---"
 
 enum Dir ::
@@ -366,87 +752,257 @@ enum Dir ::
     west
 ;;
 
-? $Dir["north"] == 0 :: $passed += 1 :: else :: >> red "[FAIL] enum 0" ;; $failed += 1 ;;
-? $Dir["west"] == 3 :: $passed += 1 :: else :: >> red "[FAIL] enum 3" ;; $failed += 1 ;;
+? $Dir["north"] == 0 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] enum 0"
+    $failed += 1
+;;
 
-## ── TYPE CHECKS ──
+? $Dir["west"] == 3 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] enum 3"
+    $failed += 1
+;;
+
 >> "\n--- TYPE CHECKS ---"
 
-? (#isnum 42) == true :: $passed += 1 :: else :: >> red "[FAIL] isnum" ;; $failed += 1 ;;
-? (#isstr "hi") == true :: $passed += 1 :: else :: >> red "[FAIL] isstr" ;; $failed += 1 ;;
-? (#islist [1]) == true :: $passed += 1 :: else :: >> red "[FAIL] islist" ;; $failed += 1 ;;
-? (#isbool true) == true :: $passed += 1 :: else :: >> red "[FAIL] isbool" ;; $failed += 1 ;;
-? (#isnull null) == true :: $passed += 1 :: else :: >> red "[FAIL] isnull" ;; $failed += 1 ;;
+? (#isnum 42) == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] isnum"
+    $failed += 1
+;;
 
-## ── MATH BUILTINS ──
+? (#isstr "hi") == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] isstr"
+    $failed += 1
+;;
+
+? (#islist [1]) == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] islist"
+    $failed += 1
+;;
+
+? (#isbool true) == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] isbool"
+    $failed += 1
+;;
+
+? (#isnull null) == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] isnull"
+    $failed += 1
+;;
+
 >> "\n--- MATH BUILTINS ---"
 
-? (#abs -42) == 42 :: $passed += 1 :: else :: >> red "[FAIL] abs" ;; $failed += 1 ;;
-? (#round 3.7) == 4 :: $passed += 1 :: else :: >> red "[FAIL] round" ;; $failed += 1 ;;
-? (#floor 3.9) == 3 :: $passed += 1 :: else :: >> red "[FAIL] floor" ;; $failed += 1 ;;
-? (#ceil 3.1) == 4 :: $passed += 1 :: else :: >> red "[FAIL] ceil" ;; $failed += 1 ;;
-? (#sqrt 144) == 12 :: $passed += 1 :: else :: >> red "[FAIL] sqrt" ;; $failed += 1 ;;
-? (#min 3 7) == 3 :: $passed += 1 :: else :: >> red "[FAIL] min" ;; $failed += 1 ;;
-? (#max 3 7) == 7 :: $passed += 1 :: else :: >> red "[FAIL] max" ;; $failed += 1 ;;
-? (#clamp 15 0 10) == 10 :: $passed += 1 :: else :: >> red "[FAIL] clamp" ;; $failed += 1 ;;
-? (#sign -5) == -1 :: $passed += 1 :: else :: >> red "[FAIL] sign" ;; $failed += 1 ;;
+? (#abs -42) == 42 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] abs"
+    $failed += 1
+;;
 
-## ── CASTING ──
+? (#round 3.7) == 4 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] round"
+    $failed += 1
+;;
+
+? (#floor 3.9) == 3 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] floor"
+    $failed += 1
+;;
+
+? (#ceil 3.1) == 4 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] ceil"
+    $failed += 1
+;;
+
+? (#sqrt 144) == 12 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] sqrt"
+    $failed += 1
+;;
+
+? (#min 3 7) == 3 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] min"
+    $failed += 1
+;;
+
+? (#max 3 7) == 7 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] max"
+    $failed += 1
+;;
+
+? (#clamp 15 0 10) == 10 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] clamp"
+    $failed += 1
+;;
+
+? (#sign -5) == -1 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] sign"
+    $failed += 1
+;;
+
 >> "\n--- CASTING ---"
 
-? (#int "42") == 42 :: $passed += 1 :: else :: >> red "[FAIL] int" ;; $failed += 1 ;;
-? (#str 42) == "42" :: $passed += 1 :: else :: >> red "[FAIL] str" ;; $failed += 1 ;;
-? (#bool 1) == true :: $passed += 1 :: else :: >> red "[FAIL] bool" ;; $failed += 1 ;;
+? (#int "42") == 42 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] int"
+    $failed += 1
+;;
 
-## ── RANGE ──
+? (#str 42) == "42" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] str"
+    $failed += 1
+;;
+
+? (#bool 1) == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] bool"
+    $failed += 1
+;;
+
 >> "\n--- RANGE ---"
 
 $r -> #range 1 5
-? (#len $r) == 5 :: $passed += 1 :: else :: >> red "[FAIL] range len" ;; $failed += 1 ;;
-? $r[0] == 1 :: $passed += 1 :: else :: >> red "[FAIL] range first" ;; $failed += 1 ;;
-? $r[4] == 5 :: $passed += 1 :: else :: >> red "[FAIL] range last" ;; $failed += 1 ;;
+? (#len $r) == 5 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] range len"
+    $failed += 1
+;;
 
-## ── BASE64 ──
+? $r[0] == 1 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] range first"
+    $failed += 1
+;;
+
+? $r[4] == 5 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] range last"
+    $failed += 1
+;;
+
 >> "\n--- BASE64 ---"
 
 $enc -> #base64 "hello world"
-? $enc == "aGVsbG8gd29ybGQ=" :: $passed += 1 :: else :: >> red "[FAIL] base64 enc" ;; $failed += 1 ;;
+? $enc == "aGVsbG8gd29ybGQ=" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] base64 enc"
+    $failed += 1
+;;
 
 $dec -> #decode64 $enc
-? $dec == "hello world" :: $passed += 1 :: else :: >> red "[FAIL] base64 dec" ;; $failed += 1 ;;
+? $dec == "hello world" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] base64 dec"
+    $failed += 1
+;;
 
-## ── HEX CIPHER ──
 >> "\n--- HEX CIPHER ---"
 
 $secret -> "top secret 123"
 $enc -> #encrypt $secret "mykey"
 $dec -> #decrypt $enc "mykey"
-? $dec == $secret :: $passed += 1 :: else :: >> red "[FAIL] encrypt/decrypt" ;; $failed += 1 ;;
+? $dec == $secret ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] encrypt/decrypt"
+    $failed += 1
+;;
 
 $e1 -> #encrypt "test" "k"
 $e2 -> #encrypt "test" "k"
-? $e1 != $e2 :: $passed += 1 :: else :: >> red "[FAIL] random salt" ;; $failed += 1 ;;
+? $e1 != $e2 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] random salt"
+    $failed += 1
+;;
 
-## ── JSON ──
 >> "\n--- JSON ---"
 
 $obj -> #json '{"name":"Niko","age":17,"scores":[90,85]}'
-? $obj["name"] == "Niko" :: $passed += 1 :: else :: >> red "[FAIL] json name" ;; $failed += 1 ;;
-? $obj["age"] == 17 :: $passed += 1 :: else :: >> red "[FAIL] json age" ;; $failed += 1 ;;
-? $obj["scores"][0] == 90 :: $passed += 1 :: else :: >> red "[FAIL] json array" ;; $failed += 1 ;;
+? $obj["name"] == "Niko" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] json name"
+    $failed += 1
+;;
 
-## ── REGEX ──
+? $obj["age"] == 17 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] json age"
+    $failed += 1
+;;
+
+? $obj["scores"][0] == 90 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] json array"
+    $failed += 1
+;;
+
 >> "\n--- REGEX ---"
 
 $all -> #matchall "a1 b2 c3" "[a-z]\\d"
-? (#len $all) == 3 :: $passed += 1 :: else :: >> red "[FAIL] matchall" ;; $failed += 1 ;;
+? (#len $all) == 3 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] matchall"
+    $failed += 1
+;;
 
 $cleaned -> #replacex "a  b   c" "\\s+" " "
-? $cleaned == "a b c" :: $passed += 1 :: else :: >> red "[FAIL] replacex" ;; $failed += 1 ;;
+? $cleaned == "a b c" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] replacex"
+    $failed += 1
+;;
 
-? (#test "abc123" "^[a-z]+\\d+$") == true :: $passed += 1 :: else :: >> red "[FAIL] regex test" ;; $failed += 1 ;;
+? (#test "abc123" "^[a-z]+\\d+$") == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] regex test"
+    $failed += 1
+;;
 
-## ── ERROR HANDLING ──
 >> "\n--- ERROR HANDLING ---"
 
 $caught -> false
@@ -455,7 +1011,12 @@ $caught -> false
 #catch ::
     $caught -> true
 ;;
-? $caught == true :: $passed += 1 :: else :: >> red "[FAIL] try/catch" ;; $failed += 1 ;;
+? $caught == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] try/catch"
+    $failed += 1
+;;
 
 $typed -> false
 #try ::
@@ -463,7 +1024,12 @@ $typed -> false
 #catch ZeroDivisionError ::
     $typed -> true
 ;;
-? $typed == true :: $passed += 1 :: else :: >> red "[FAIL] typed catch" ;; $failed += 1 ;;
+? $typed == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] typed catch"
+    $failed += 1
+;;
 
 $fin -> false
 #try ::
@@ -473,37 +1039,68 @@ $fin -> false
 #finally ::
     $fin -> true
 ;;
-? $fin == true :: $passed += 1 :: else :: >> red "[FAIL] finally" ;; $failed += 1 ;;
+? $fin == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] finally"
+    $failed += 1
+;;
 
-## ── FILES ──
 >> "\n--- FILES ---"
 
 ~write "__deep_test_tmp.txt" "hello"
-? (~exists "__deep_test_tmp.txt") == true :: $passed += 1 :: else :: >> red "[FAIL] file write" ;; $failed += 1 ;;
+? (~exists "__deep_test_tmp.txt") == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] file write"
+    $failed += 1
+;;
 
 $content -> ~read "__deep_test_tmp.txt"
-? $content == "hello" :: $passed += 1 :: else :: >> red "[FAIL] file read" ;; $failed += 1 ;;
+? $content == "hello" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] file read"
+    $failed += 1
+;;
 
 ~del "__deep_test_tmp.txt"
-? (~exists "__deep_test_tmp.txt") == false :: $passed += 1 :: else :: >> red "[FAIL] file del" ;; $failed += 1 ;;
+? (~exists "__deep_test_tmp.txt") == false ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] file del"
+    $failed += 1
+;;
 
-## ── MULTI-LINE STRINGS ──
 >> "\n--- MULTI-LINE STRINGS ---"
 
 $ml -> """line1
 line2"""
-? (#test $ml "line1") == true :: $passed += 1 :: else :: >> red "[FAIL] multiline" ;; $failed += 1 ;;
+? (#test $ml "line1") == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] multiline"
+    $failed += 1
+;;
 
-## ── DATE / TIME ──
 >> "\n--- DATE / TIME ---"
 
 $d -> #date
-? (#test $d "^\\d{4}") == true :: $passed += 1 :: else :: >> red "[FAIL] date" ;; $failed += 1 ;;
+? (#test $d "^\\d{4}") == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] date"
+    $failed += 1
+;;
 
 $t -> #time
-? (#isnum $t) == true :: $passed += 1 :: else :: >> red "[FAIL] time" ;; $failed += 1 ;;
+? (#isnum $t) == true ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] time"
+    $failed += 1
+;;
 
-## ── COMPLEX SCENARIOS ──
 >> "\n--- COMPLEX SCENARIOS ---"
 
 $sum -> 0
@@ -513,23 +1110,43 @@ for $row in $matrix ::
         $sum += $val
     ;;
 ;;
-? $sum == 21 :: $passed += 1 :: else :: >> red "[FAIL] nested loops" ;; $failed += 1 ;;
+? $sum == 21 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] nested loops"
+    $failed += 1
+;;
 
 get_pair ::
     => [42, 99]
 ;;
 [$x, $y] -> get_pair
-? $x == 42 :: $passed += 1 :: else :: >> red "[FAIL] func+destruct" ;; $failed += 1 ;;
+? $x == 42 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] func+destruct"
+    $failed += 1
+;;
 
 $s -> "  Hello, World!  "
 &trim $s
 &lower $s
 &replace $s "," ""
 &replace $s "!" ""
-? $s == "hello world" :: $passed += 1 :: else :: >> red "[FAIL] chained ops" ;; $failed += 1 ;;
+? $s == "hello world" ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] chained ops"
+    $failed += 1
+;;
 
 $config -> #json '{"debug": true, "port": 8080}'
-? $config["port"] == 8080 :: $passed += 1 :: else :: >> red "[FAIL] json config" ;; $failed += 1 ;;
+? $config["port"] == 8080 ::
+    $passed += 1
+:: else ::
+    >> red "[FAIL] json config"
+    $failed += 1
+;;
 
 ## ════════════════════════════════════════
 >> "\n=========================================="
