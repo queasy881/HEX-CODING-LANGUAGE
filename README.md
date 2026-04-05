@@ -378,14 +378,16 @@ $x -> #bool $val         ## truthy check
 Built-in encryption — no libraries needed. Python needs `pip install cryptography`.
 ```
 $encrypted -> #encrypt "my secret" "password123"
-## returns: "HX1:base64encodeddata..."
+## returns: "~HX{K9h359xKK39Xx5r9...}~"
 
 $decrypted -> #decrypt $encrypted "password123"
 ## returns: "my secret"
 ```
 - XOR stream cipher with key derivation
 - Random salt per encryption (same input = different output each time)
-- Format: `HX1:<base64(salt + ciphertext)>`
+- Custom encoding unique to HEX (NOT base64)
+- Format: `~HX{encoded_data}~`
+- Alphabet: `hH3xX9eE1kK5rR7a`
 
 ### Debug
 ```
