@@ -1,0 +1,89 @@
+## Test all file operations
+
+>> bold "=== FILE OPERATIONS ==="
+
+## Create and write
+~write "test_file.txt" "line 1\nline 2\nline 3"
+>> green "~write: created test_file.txt"
+
+## Append
+~append "test_file.txt" "line 4"
+>> green "~append: added line 4"
+
+## Read
+$content -> ~read "test_file.txt"
+>> "~read: " + $content
+
+## Read as lines
+$lines -> ~lines "test_file.txt"
+>> "~lines: " + $lines
+
+## File exists
+>> "~exists: " + ~exists "test_file.txt"
+
+## File size
+$sz -> ~size "test_file.txt"
+>> "~size: {$sz} bytes"
+
+## Get extension
+>> "~ext: " + ~ext "test_file.txt"
+
+## Get filename
+>> "~name: " + ~name "C:/Users/test/file.txt"
+
+## Get parent dir
+>> "~dir: " + ~dir "C:/Users/test/file.txt"
+
+## Current directory
+$cwd -> ~cwd
+>> "~cwd: {$cwd}"
+
+## Copy file
+~copy "test_file.txt" "test_copy.txt"
+>> green "~copy: copied to test_copy.txt"
+>> "copy exists: " + ~exists "test_copy.txt"
+
+## Rename
+~rename "test_copy.txt" "test_renamed.txt"
+>> green "~rename: renamed to test_renamed.txt"
+>> "renamed exists: " + ~exists "test_renamed.txt"
+>> "old exists: " + ~exists "test_copy.txt"
+
+## Replace string in file
+~write "test_replace.txt" "hello world hello"
+~replace "test_replace.txt" "hello" "HEX"
+$replaced -> ~read "test_replace.txt"
+>> "~replace: " + $replaced
+
+## Touch (create empty)
+~touch "test_empty.txt"
+>> "~touch: " + ~exists "test_empty.txt"
+>> "~touch size: " + ~size "test_empty.txt"
+
+## Make directory
+~mkdir "test_dir/sub/deep"
+>> green "~mkdir: created test_dir/sub/deep"
+
+## List directory
+$items -> ~ls "."
+>> "~ls has items: " + #len $items
+
+## Find files
+~write "test_dir/a.txt" "aaa"
+~write "test_dir/b.txt" "bbb"
+~write "test_dir/c.hex" "ccc"
+~find "test_dir" "*.txt" $found
+>> "~find *.txt: " + $found
+
+## Cleanup
+~del "test_file.txt"
+~del "test_renamed.txt"
+~del "test_replace.txt"
+~del "test_empty.txt"
+~del "test_dir/a.txt"
+~del "test_dir/b.txt"
+~del "test_dir/c.hex"
+~rmdir "test_dir"
+>> green "\nAll cleaned up!"
+
+>> bold "\n=== ALL FILE OPS WORK ==="

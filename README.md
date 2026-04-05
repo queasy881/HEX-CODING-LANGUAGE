@@ -262,14 +262,45 @@ $person["age"] -> 18
 
 ## File I/O
 
+### Read / Write
 ```
-~write "data.txt" "hello"
-~append "data.txt" "new line"
-$content -> ~read "data.txt"
-? ~exists "data.txt" ::
-    >> "found"
-;;
-~del "data.txt"
+~write "data.txt" "hello"           ## write (overwrite)
+~append "data.txt" "new line"       ## append line
+$content -> ~read "data.txt"        ## read entire file as string
+$lines -> ~lines "data.txt"         ## read as list of lines
+~touch "empty.txt"                  ## create empty file
+```
+
+### Check / Info
+```
+? ~exists "data.txt" :: >> "found" ;;
+$sz -> ~size "data.txt"             ## file size in bytes
+>> ~ext "photo.png"                 ## "png"
+>> ~name "path/to/file.txt"        ## "file.txt"
+>> ~dir "path/to/file.txt"         ## "path/to"
+$cwd -> ~cwd                       ## current working directory
+```
+
+### Copy / Move / Rename / Delete
+```
+~copy "a.txt" "b.txt"              ## copy file
+~move "a.txt" "new/a.txt"          ## move file
+~rename "old.txt" "new.txt"        ## rename file
+~del "data.txt"                    ## delete file
+```
+
+### Directories
+```
+~mkdir "folder/sub/deep"            ## create dirs (including parents)
+~rmdir "folder"                     ## remove directory and contents
+~cd "path"                          ## change working directory
+$files -> ~ls "."                   ## list directory as list
+```
+
+### Search / Replace
+```
+~find "src" "*.txt" $results        ## find files matching pattern recursively
+~replace "file.txt" "old" "new"     ## replace string in file contents
 ```
 
 ---
@@ -783,6 +814,7 @@ See the `examples/` folder:
 - `v2_features.hex` — compound assignment, ternary, match, classes, destructuring, map/filter/reduce
 - `async_test.hex` — async functions with await
 - `v3_features.hex` — JSON, regex, enums, inheritance, error handling v2
+- `file_ops.hex` — all file/directory operations
 
 ---
 
