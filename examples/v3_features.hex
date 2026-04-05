@@ -1,0 +1,123 @@
+## Test v3 features: JSON, regex, inheritance, enums, error upgrades
+
+>> "=== JSON PARSING ==="
+$json_str -> '{"name": "Niko", "age": 17, "skills": ["HEX", "C++", "Python"]}'
+$obj -> #json $json_str
+>> "Name: " + $obj["name"]
+>> "Age: " + $obj["age"]
+>> "Skills: " + $obj["skills"]
+>> "First skill: " + $obj["skills"][0]
+
+>> "\n=== JSON STRINGIFY ==="
+$data -> {"status": "ok", "count": 42, "items": [1, 2, 3]}
+$json_out -> #tojson $data
+>> $json_out
+
+$compact -> #jsonc $data
+>> "Compact: " + $compact
+
+>> "\n=== HTTP + JSON (real API) ==="
+$response -> ~get "http://httpbin.org/json"
+$parsed -> #json $response
+>> "Parsed API response type: " + #type $parsed
+
+>> "\n=== REGEX ==="
+$text -> "My email is niko@hex.dev and backup is admin@hex.dev"
+$match -> #match $text "[a-z]+@[a-z]+\\.[a-z]+"
+>> "First match: " + $match
+
+$all -> #matchall $text "[a-z]+@[a-z]+\\.[a-z]+"
+>> "All matches: " + $all
+
+$cleaned -> #replacex "Hello   World   HEX" "\\s+" " "
+>> "Regex replace: " + $cleaned
+
+$is_email -> #test "niko@hex.dev" "^[a-z]+@[a-z]+\\.[a-z]+$"
+>> "Is email: " + $is_email
+
+>> "\n=== STRING PADDING ==="
+$padded -> #padl "42" 8 "0"
+>> "Left pad: '" + $padded + "'"
+
+$padded -> #padr "hello" 10 "."
+>> "Right pad: '" + $padded + "'"
+
+$centered -> #center "HEX" 20 "-"
+>> "Centered: '" + $centered + "'"
+
+>> "\n=== ENUMS ==="
+enum Color ::
+    red
+    green
+    blue
+    yellow
+;;
+
+>> "Color.red = " + $Color["red"]
+>> "Color.blue = " + $Color["blue"]
+
+enum Status ::
+    pending
+    active
+    banned
+    deleted
+;;
+
+>> "Status.active = " + $Status["active"]
+>> "Status.banned = " + $Status["banned"]
+
+>> "\n=== CLASS INHERITANCE ==="
+class Animal ::
+    init $name ::
+        $this["name"] -> $name
+        $this["type"] -> "animal"
+    ;;
+    speak ::
+        >> $this["name"] + " makes a sound"
+    ;;
+    info ::
+        >> $this["name"] + " is a " + $this["type"]
+    ;;
+;;
+
+class Dog extends Animal ::
+    init $name ::
+        $this["name"] -> $name
+        $this["type"] -> "dog"
+    ;;
+    speak ::
+        >> $this["name"] + " says WOOF!"
+    ;;
+    fetch ::
+        >> $this["name"] + " fetches the ball!"
+    ;;
+;;
+
+$animal -> new Animal "Generic"
+$animal.speak
+$animal.info
+
+$rex -> new Dog "Rex"
+$rex.speak
+$rex.info
+$rex.fetch
+
+>> "\n=== ERROR HANDLING v2 ==="
+
+## Catch specific error type
+#try ::
+    $x -> 10 / 0
+#catch ZeroDivisionError ::
+    >> green "Caught ZeroDivisionError specifically!"
+;;
+
+## #finally always runs
+#try ::
+    $x -> 10 / 0
+#catch ::
+    >> yellow "error caught"
+#finally ::
+    >> cyan "finally block ran (always runs)"
+;;
+
+>> "\n=== ALL V3 FEATURES WORK ==="

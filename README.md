@@ -412,6 +412,109 @@ Built-in colors — no libraries needed. Python needs `pip install colorama`.
 
 ---
 
+## JSON
+
+Parse JSON strings into HEX maps/lists. Stringify HEX values to JSON.
+Python needs `import json`. HEX does it natively.
+
+```
+## Parse
+$data -> #json '{"name": "Niko", "age": 17, "skills": ["HEX", "C++"]}'
+>> $data["name"]          ## Niko
+>> $data["skills"][0]     ## HEX
+
+## Stringify (pretty)
+$json -> #tojson $data
+>> $json
+
+## Stringify (compact)
+$compact -> #jsonc $data
+>> $compact
+
+## HTTP + JSON combo
+$response -> ~get "https://api.example.com/data"
+$parsed -> #json $response
+>> $parsed["results"]
+```
+
+---
+
+## Regex
+
+Pattern matching and replacement. Python needs `import re`.
+
+```
+## Match — returns list of groups
+$result -> #match "hello world" "[a-z]+"
+>> $result               ## ["hello"]
+
+## Match all occurrences
+$all -> #matchall "a1 b2 c3" "[a-z]\\d"
+>> $all                  ## ["a1", "b2", "c3"]
+
+## Test — returns true/false
+$valid -> #test "niko@hex.dev" "^[a-z]+@[a-z]+\\.[a-z]+$"
+
+## Regex replace
+$clean -> #replacex "Hello   World" "\\s+" " "
+>> $clean                ## "Hello World"
+```
+
+---
+
+## String Padding
+
+```
+#padl "42" 8 "0"         ## "00000042"
+#padr "hello" 10 "."     ## "hello....."
+#center "HEX" 20 "-"     ## "--------HEX---------"
+```
+
+---
+
+## Enums
+
+```
+enum Color ::
+    red
+    green
+    blue
+;;
+
+>> $Color["red"]          ## 0
+>> $Color["blue"]         ## 2
+```
+
+---
+
+## Class Inheritance
+
+```
+class Animal ::
+    init $name ::
+        $this["name"] -> $name
+    ;;
+    speak ::
+        >> $this["name"] + " makes a sound"
+    ;;
+;;
+
+class Dog extends Animal ::
+    speak ::
+        >> $this["name"] + " says WOOF!"
+    ;;
+    fetch ::
+        >> $this["name"] + " fetches the ball"
+    ;;
+;;
+
+$rex -> new Dog "Rex"
+$rex.speak               ## Rex says WOOF!
+$rex.fetch               ## Rex fetches the ball
+```
+
+---
+
 ## Error Handling
 
 ```
@@ -419,8 +522,22 @@ Built-in colors — no libraries needed. Python needs `pip install colorama`.
     $x -> #int "abc"
 #catch ::
     >> "error caught!"
+#finally ::
+    >> "always runs"
 ;;
 ```
+
+### Catch Specific Types
+```
+#try ::
+    $x -> 10 / 0
+#catch ZeroDivisionError ::
+    >> "caught division by zero!"
+;;
+```
+
+### Error Info Variables
+Inside `#catch`, `$__error_type` and `$__error_msg` are set automatically.
 
 ### Error Types
 Errors display Python-style tracebacks:
@@ -665,6 +782,7 @@ See the `examples/` folder:
 - `crypto_test.hex` — custom HEX cipher demo
 - `v2_features.hex` — compound assignment, ternary, match, classes, destructuring, map/filter/reduce
 - `async_test.hex` — async functions with await
+- `v3_features.hex` — JSON, regex, enums, inheritance, error handling v2
 
 ---
 
