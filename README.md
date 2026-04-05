@@ -104,6 +104,20 @@ $x -> 2 ^ 10      ## 1024
 ```
 ==    !=    <    >    <=    >=
 &&    ||    !!
+in                               ## membership test
+```
+
+### The `in` Operator
+```
+? 3 in [1, 2, 3, 4] ::          ## true — value in list
+    >> "found"
+;;
+? "lo" in "hello" ::             ## true — substring in string
+    >> "found"
+;;
+? "name" in $map ::              ## true — key in map
+    >> "found"
+;;
 ```
 
 ---
@@ -236,6 +250,12 @@ $msg -> "hello world"
 &count $msg "l"          ## count occurrences
 &isdigit $msg            ## true if all digits
 &isalpha $msg            ## true if all letters
+&lstrip $msg             ## strip left whitespace
+&rstrip $msg             ## strip right whitespace
+&zfill $msg 8            ## pad with zeros: "00000042"
+&partition $msg "-"      ## split into [before, sep, after]
+&ljust $msg 20           ## left justify (pad right with spaces)
+&rjust $msg 20           ## right justify (pad left with spaces)
 
 >> $msg[0]               ## first char
 >> $msg[0:5]             ## slice
@@ -355,7 +375,30 @@ $x -> #bool $val         ## truthy check
 #rand 1 100              ## random number
 ```
 
-### Utility
+### Character / Number Formats
+```
+#chr 65                  ## "A"
+#ord "A"                 ## 65
+#hex 255                 ## "0xFF"
+#bin 10                  ## "0b1010"
+#oct 8                   ## "0o10"
+```
+
+### Constants
+```
+#pi                      ## 3.14159265358979
+#e                       ## 2.71828182845904
+#inf                     ## infinity
+```
+
+### Non-mutating List Operations
+```
+$sorted -> #sorted $list     ## returns new sorted list (original unchanged)
+$rev -> #reversed $list      ## returns new reversed list
+$unique -> #set $list        ## returns list with duplicates removed
+```
+
+### System
 ```
 #len $var                ## length of string/list/map
 #type $var               ## "number", "string", etc.
@@ -366,6 +409,9 @@ $x -> #bool $val         ## truthy check
 #clear                   ## clear screen
 #swap $a $b              ## swap two variables
 #exit                    ## exit program
+$args -> #argv           ## command line arguments as list
+$val -> #env "PATH"      ## read environment variable
+$name -> #input "Name: " ## prompt and read input (expression)
 ```
 
 ### Encoding
@@ -797,6 +843,29 @@ add $a $b ::
 ```
 $r -> #range 1 10               ## [1, 2, 3, ..., 10]
 $r -> #range 10 1               ## [10, 9, 8, ..., 1]
+$r -> #range 0 10 2             ## [0, 2, 4, 6, 8, 10] — with step
+$r -> #range 10 0 (-2)          ## [10, 8, 6, 4, 2, 0] — negative step
+```
+
+---
+
+## Pass / Del / Raise
+
+```
+## pass — do nothing placeholder
+? true ::
+    pass
+;;
+
+## del — delete a variable
+$temp -> 42
+del $temp                        ## $temp is now null
+
+## raise — throw a custom error
+raise "something went wrong!"    ## throws RuntimeError
+
+## setenv — set environment variable
+setenv "MY_KEY" "my_value"
 ```
 
 ---
@@ -817,6 +886,7 @@ See the `examples/` folder:
 - `async_test.hex` — async functions with await
 - `v3_features.hex` — JSON, regex, enums, inheritance, error handling v2
 - `file_ops.hex` — all file/directory operations
+- `v4_features.hex` — in operator, chr/ord, hex/bin, argv, env, sorted, set, pass, del, raise
 
 ---
 

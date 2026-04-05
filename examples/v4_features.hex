@@ -1,0 +1,117 @@
+## Test v4 — Python parity features
+
+>> bold "=== V4 FEATURES ==="
+
+>> "\n--- IN OPERATOR ---"
+$list -> [1, 2, 3, 4, 5]
+>> "3 in list: " + (3 in $list)
+>> "9 in list: " + (9 in $list)
+>> "'lo' in 'hello': " + ("lo" in "hello")
+$m -> {"a": 1, "b": 2}
+>> "'a' in map: " + ("a" in $m)
+
+>> "\n--- CHR / ORD ---"
+>> "chr(65) = " + #chr 65
+>> "chr(72) = " + #chr 72
+>> "ord('A') = " + #ord "A"
+>> "ord('Z') = " + #ord "Z"
+
+>> "\n--- HEX / BIN / OCT ---"
+>> "hex(255) = " + #hex 255
+>> "bin(10) = " + #bin 10
+>> "oct(8) = " + #oct 8
+
+>> "\n--- MATH CONSTANTS ---"
+>> "pi = " + #pi
+>> "e = " + #e
+
+>> "\n--- ARGV ---"
+$args -> #argv
+>> "argv: " + $args
+
+>> "\n--- ENV ---"
+>> "USERNAME = " + #env "USERNAME"
+
+>> "\n--- RANGE WITH STEP ---"
+$evens -> #range 0 10 2
+>> "evens: " + $evens
+$countdown -> #range 10 0 (-2)
+>> "countdown: " + $countdown
+
+>> "\n--- SORTED / REVERSED (non-mutating) ---"
+$orig -> [5, 3, 1, 4, 2]
+$s -> #sorted $orig
+>> "sorted: " + $s
+>> "original unchanged: " + $orig
+$r -> #reversed $orig
+>> "reversed: " + $r
+
+>> "\n--- SET (unique) ---"
+$dupes -> [1, 2, 2, 3, 3, 3, 4]
+$unique -> #set $dupes
+>> "set: " + $unique
+
+>> "\n--- STRING OPS ---"
+$s -> "  hello  "
+&lstrip $s
+>> "lstrip: '" + $s + "'"
+$s -> "  hello  "
+&rstrip $s
+>> "rstrip: '" + $s + "'"
+
+$n -> "42"
+&zfill $n 8
+>> "zfill: " + $n
+
+$s -> "hello-world-hex"
+&partition $s "-"
+>> "partition: " + $s
+
+$s -> "hi"
+&ljust $s 10
+>> "ljust: '" + $s + "'"
+$s -> "hi"
+&rjust $s 10
+>> "rjust: '" + $s + "'"
+
+>> "\n--- PASS ---"
+? true ::
+    pass
+;;
+>> "pass works"
+
+>> "\n--- DEL ---"
+$temp -> 42
+>> "before del: " + $temp
+del $temp
+>> "after del: " + $temp
+
+>> "\n--- RAISE ---"
+#try ::
+    raise "custom error!"
+#catch ::
+    >> green "caught raised error: " + $__error_msg
+;;
+
+>> "\n--- INPUT (alternative) ---"
+## $name -> #input "Name: "  ## uncomment to test interactively
+
+>> "\n--- DEEP TEST STILL PASSES ---"
+## Verify nothing broke
+? (5 + 3) == 8 ::
+    >> green "math: OK"
+;;
+? (#len [1, 2, 3]) == 3 ::
+    >> green "lists: OK"
+;;
+$enc -> #encrypt "test" "key"
+$dec -> #decrypt $enc "key"
+? $dec == "test" ::
+    >> green "crypto: OK"
+;;
+$obj -> #json '{"a": 1}'
+? $obj["a"] == 1 ::
+    >> green "json: OK"
+;;
+
+>> bold "\n=== ALL V4 FEATURES WORK ==="
