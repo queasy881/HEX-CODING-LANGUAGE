@@ -1,0 +1,747 @@
+## ================================================================
+## DEEP TEST — tests EVERYTHING in HEX with complex scenarios
+## If this file runs without errors, the language is solid
+## ================================================================
+
+$passed -> 0
+$failed -> 0
+
+check $name $got $expected ::
+    ? $got == $expected ::
+        $passed += 1
+    :: else ::
+        >> red "[FAIL] {$name}: got '{$got}', expected '{$expected}'"
+        $failed += 1
+    ;;
+;;
+
+>> bold "=========================================="
+>> bold "  HEX DEEP TEST SUITE"
+>> bold "=========================================="
+
+## ────────────────────────────────────────
+>> "\n--- VARIABLES & TYPES ---"
+## ────────────────────────────────────────
+
+$a -> 42
+check "int assign" $a 42
+
+$b -> 3.14
+check "float assign" $b 3.14
+
+$c -> "hello"
+check "string assign" $c "hello"
+
+$d -> true
+check "bool assign" $d true
+
+$e -> null
+check "null assign" $e null
+
+$f -> [1, 2, 3]
+check "list assign" $f [1, 2, 3]
+
+$g -> {"x": 1, "y": 2}
+check "map assign type" #type $g "map"
+
+## ────────────────────────────────────────
+>> "\n--- MATH ---"
+## ────────────────────────────────────────
+
+check "add" (5 + 3) 8
+check "sub" (10 - 7) 3
+check "mul" (4 * 6) 24
+check "div" (20 / 4) 5
+check "mod" (17 % 5) 2
+check "pow" (2 ^ 10) 1024
+check "negative" (-5 + 10) 5
+check "order of ops" (2 + 3 * 4) 14
+check "parens" ((2 + 3) * 4) 20
+check "nested math" ((10 - 2) * (3 + 1) / 4) 8
+
+## ────────────────────────────────────────
+>> "\n--- COMPOUND ASSIGNMENT ---"
+## ────────────────────────────────────────
+
+$x -> 10
+$x += 5
+check "+=" $x 15
+$x -= 3
+check "-=" $x 12
+$x *= 2
+check "*=" $x 24
+$x /= 6
+check "/=" $x 4
+
+$s -> "hello"
+$s += " world"
+check "+= string" $s "hello world"
+
+## ────────────────────────────────────────
+>> "\n--- COMPARISONS ---"
+## ────────────────────────────────────────
+
+check "==" (5 == 5) true
+check "!=" (5 != 3) true
+check ">" (10 > 5) true
+check "<" (3 < 7) true
+check ">=" (5 >= 5) true
+check "<=" (4 <= 4) true
+check "str ==" ("abc" == "abc") true
+check "str !=" ("abc" != "xyz") true
+
+## ────────────────────────────────────────
+>> "\n--- LOGIC ---"
+## ────────────────────────────────────────
+
+check "and tt" (true && true) true
+check "and tf" (true && false) false
+check "or tf" (true || false) true
+check "or ff" (false || false) false
+check "not t" (!!true) false
+check "not f" (!!false) true
+
+## ────────────────────────────────────────
+>> "\n--- TERNARY ---"
+## ────────────────────────────────────────
+
+check "ternary true" (true ? "yes" : "no") "yes"
+check "ternary false" (false ? "yes" : "no") "no"
+check "ternary expr" (5 > 3 ? "big" : "small") "big"
+$age -> 17
+check "ternary var" ($age >= 18 ? "adult" : "minor") "minor"
+check "nested ternary" (true ? (false ? "a" : "b") : "c") "b"
+
+## ────────────────────────────────────────
+>> "\n--- STRING INTERPOLATION ---"
+## ────────────────────────────────────────
+
+$name -> "HEX"
+$ver -> 3
+check "interpolation" "lang={$name}" "lang=HEX"
+check "interp multi" "{$name} v{$ver}" "HEX v3"
+
+## ────────────────────────────────────────
+>> "\n--- STRING OPS ---"
+## ────────────────────────────────────────
+
+$s -> "  hello  "
+&trim $s
+check "trim" $s "hello"
+
+$s -> "hello world"
+&upper $s
+check "upper" $s "HELLO WORLD"
+&lower $s
+check "lower" $s "hello world"
+
+$s -> "hello world"
+&title $s
+check "title" $s "Hello World"
+
+$s -> "hello"
+&capitalize $s
+check "capitalize" $s "Hello"
+
+$s -> "Hello"
+&swapcase $s
+check "swapcase" $s "hELLO"
+
+$s -> "ha"
+&repeat $s 3
+check "repeat" $s "hahaha"
+
+$s -> "hello world hello"
+&replace $s "hello" "hi"
+check "replace" $s "hi world hi"
+
+$s -> "a,b,c,d"
+&split $s ","
+check "split type" #type $s "list"
+check "split len" #len $s 4
+
+$s -> "hello"
+&chars $s
+check "chars" $s ["h", "e", "l", "l", "o"]
+
+check "padl" #padl "42" 6 "0" "000042"
+check "padr" #padr "hi" 6 "." "hi...."
+check "center" #center "X" 5 "-" "--X--"
+
+## ────────────────────────────────────────
+>> "\n--- STRING INDEXING ---"
+## ────────────────────────────────────────
+
+$s -> "abcdef"
+check "index 0" $s[0] "a"
+check "index 3" $s[3] "d"
+check "index -1" $s[-1] "f"
+check "slice" $s[1:4] "bcd"
+
+## ────────────────────────────────────────
+>> "\n--- LISTS ---"
+## ────────────────────────────────────────
+
+$list -> [10, 20, 30, 40, 50]
+check "list[0]" $list[0] 10
+check "list[4]" $list[4] 50
+check "list[-1]" $list[-1] 50
+check "list slice" $list[1:3] [20, 30]
+
+&push $list 60
+check "push" #len $list 6
+
+&pop $list
+check "pop" #len $list 5
+
+&insert $list 0 5
+check "insert" $list[0] 5
+
+&rm $list 0
+check "rm" $list[0] 10
+
+&sort $list
+check "sort first" $list[0] 10
+
+&reverse $list
+check "reverse first" $list[0] 50
+
+$nums -> [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+&unique $nums
+check "unique len" #len $nums 7
+
+$nested -> [[1, 2], [3, 4], [5]]
+&flat $nested
+check "flat" $nested [1, 2, 3, 4, 5]
+
+&fill $zeros 0 4
+check "fill" $zeros [0, 0, 0, 0]
+
+## ────────────────────────────────────────
+>> "\n--- MAPS ---"
+## ────────────────────────────────────────
+
+$m -> {"a": 1, "b": 2, "c": 3}
+check "map access" $m["b"] 2
+
+$m["d"] -> 4
+check "map set" $m["d"] 4
+
+&del $m "c"
+check "map del" #len $m 3
+
+$m2 -> {"e": 5}
+&merge $m $m2
+check "map merge" $m["e"] 5
+
+## ────────────────────────────────────────
+>> "\n--- IF / ELSE ---"
+## ────────────────────────────────────────
+
+$result -> ""
+$x -> 15
+? $x > 20 ::
+    $result -> "big"
+?? $x > 10 ::
+    $result -> "medium"
+:: else ::
+    $result -> "small"
+;;
+check "if-elseif-else" $result "medium"
+
+## Nested if
+$result -> ""
+? true ::
+    ? false ::
+        $result -> "wrong"
+    :: else ::
+        $result -> "right"
+    ;;
+;;
+check "nested if" $result "right"
+
+## ────────────────────────────────────────
+>> "\n--- LOOPS ---"
+## ────────────────────────────────────────
+
+## For range
+$sum -> 0
+for $i in 1..10 ::
+    $sum += $i
+;;
+check "for range sum" $sum 55
+
+## For list
+$result -> ""
+$items -> ["a", "b", "c"]
+for $item in $items ::
+    $result += $item
+;;
+check "for list" $result "abc"
+
+## While
+$count -> 0
+while $count < 5 ::
+    $count += 1
+;;
+check "while" $count 5
+
+## Repeat
+$count -> 0
+rep 7 ::
+    $count += 1
+;;
+check "repeat" $count 7
+
+## Forever with break
+$count -> 0
+forever ::
+    $count += 1
+    ? $count >= 3 ::
+        break
+    ;;
+;;
+check "forever+break" $count 3
+
+## Do-while
+$count -> 0
+do ::
+    $count += 1
+;; while $count < 3
+check "do-while" $count 3
+
+## Break
+$sum -> 0
+for $i in 1..100 ::
+    ? $i > 5 ::
+        break
+    ;;
+    $sum += $i
+;;
+check "break" $sum 15
+
+## Continue
+$sum -> 0
+for $i in 1..10 ::
+    ? $i % 2 == 0 ::
+        continue
+    ;;
+    $sum += $i
+;;
+check "continue" $sum 25
+
+## ────────────────────────────────────────
+>> "\n--- FUNCTIONS ---"
+## ────────────────────────────────────────
+
+add $a $b ::
+    => $a + $b
+;;
+check "func return" (add 10 20) 30
+
+factorial $n ::
+    ? $n <= 1 ::
+        => 1
+    ;;
+    => $n * (factorial ($n - 1))
+;;
+check "recursion" (factorial 6) 720
+
+## Function that modifies list
+double_all $list ::
+    for $i in 0..((#len $list) - 1) ::
+        $list[$i] -> $list[$i] * 2
+    ;;
+;;
+$nums -> [1, 2, 3]
+double_all $nums
+check "func modify list" $nums [2, 4, 6]
+
+## ────────────────────────────────────────
+>> "\n--- MAP / FILTER / REDUCE ---"
+## ────────────────────────────────────────
+
+times3 $x ::
+    => $x * 3
+;;
+$data -> [1, 2, 3, 4]
+&map $data times3
+check "map" $data [3, 6, 9, 12]
+
+gt5 $x ::
+    => $x > 5
+;;
+&filter $data gt5
+check "filter" $data [6, 9, 12]
+
+sum2 $a $b ::
+    => $a + $b
+;;
+&reduce $data sum2
+check "reduce" $data 27
+
+## ────────────────────────────────────────
+>> "\n--- ZIP / ENUMERATE ---"
+## ────────────────────────────────────────
+
+$keys -> ["a", "b", "c"]
+$vals -> [1, 2, 3]
+&zip $keys $vals
+check "zip" $keys [["a", 1], ["b", 2], ["c", 3]]
+
+$items -> ["x", "y", "z"]
+&enumerate $items
+check "enumerate" $items [[0, "x"], [1, "y"], [2, "z"]]
+
+## ────────────────────────────────────────
+>> "\n--- MATCH / SWITCH ---"
+## ────────────────────────────────────────
+
+$result -> ""
+$cmd -> "greet"
+match $cmd ::
+    case "quit" ::
+        $result -> "quitting"
+    ;;
+    case "greet" ::
+        $result -> "hello!"
+    ;;
+    default ::
+        $result -> "unknown"
+    ;;
+;;
+check "match case" $result "hello!"
+
+$result -> ""
+$cmd -> "xyz"
+match $cmd ::
+    case "a" ::
+        $result -> "A"
+    ;;
+    default ::
+        $result -> "default"
+    ;;
+;;
+check "match default" $result "default"
+
+## ────────────────────────────────────────
+>> "\n--- CONSTANTS ---"
+## ────────────────────────────────────────
+
+lock $MAX -> 100
+check "lock value" $MAX 100
+
+$locked_ok -> false
+#try ::
+    $MAX -> 999
+#catch ::
+    $locked_ok -> true
+;;
+check "lock protection" $locked_ok true
+
+## ────────────────────────────────────────
+>> "\n--- DESTRUCTURING ---"
+## ────────────────────────────────────────
+
+[$a, $b, $c] -> [100, 200, 300]
+check "destructure a" $a 100
+check "destructure b" $b 200
+check "destructure c" $c 300
+
+$pair -> [42, 99]
+[$x, $y] -> $pair
+check "destructure var" $x 42
+
+## ────────────────────────────────────────
+>> "\n--- CLASSES ---"
+## ────────────────────────────────────────
+
+class Counter ::
+    init $start ::
+        $this["val"] -> $start
+    ;;
+    inc ::
+        $this["val"] -> $this["val"] + 1
+    ;;
+    get ::
+        => $this["val"]
+    ;;
+;;
+
+$c -> new Counter 0
+$c.inc
+$c.inc
+$c.inc
+check "class method" $c["val"] 3
+
+## ────────────────────────────────────────
+>> "\n--- INHERITANCE ---"
+## ────────────────────────────────────────
+
+class Shape ::
+    init $type ::
+        $this["type"] -> $type
+    ;;
+    describe ::
+        => "I am a " + $this["type"]
+    ;;
+;;
+
+class Circle extends Shape ::
+    init $radius ::
+        $this["type"] -> "circle"
+        $this["radius"] -> $radius
+    ;;
+    area ::
+        => 3.14159 * $this["radius"] * $this["radius"]
+    ;;
+;;
+
+$c -> new Circle 5
+check "inherit type" $c["type"] "circle"
+check "inherit radius" $c["radius"] 5
+
+## ────────────────────────────────────────
+>> "\n--- ENUMS ---"
+## ────────────────────────────────────────
+
+enum Direction ::
+    north
+    south
+    east
+    west
+;;
+
+check "enum north" $Direction["north"] 0
+check "enum south" $Direction["south"] 1
+check "enum east" $Direction["east"] 2
+check "enum west" $Direction["west"] 3
+
+## ────────────────────────────────────────
+>> "\n--- TYPE CHECKS ---"
+## ────────────────────────────────────────
+
+check "isnum" #isnum 42 true
+check "isnum str" #isnum "hi" false
+check "isstr" #isstr "hi" true
+check "islist" #islist [1, 2] true
+check "ismap" #ismap {"a": 1} true
+check "isbool" #isbool true true
+check "isnull" #isnull null true
+
+## ────────────────────────────────────────
+>> "\n--- MATH BUILTINS ---"
+## ────────────────────────────────────────
+
+check "abs" #abs -42 42
+check "round" #round 3.7 4
+check "floor" #floor 3.9 3
+check "ceil" #ceil 3.1 4
+check "sqrt" #sqrt 144 12
+check "min" (#min 3 7) 3
+check "max" (#max 3 7) 7
+check "clamp" (#clamp 15 0 10) 10
+check "pow" (#pow 2 8) 256
+check "sign pos" (#sign 5) 1
+check "sign neg" (#sign -5) -1
+check "sign zero" (#sign 0) 0
+
+## ────────────────────────────────────────
+>> "\n--- CASTING ---"
+## ────────────────────────────────────────
+
+check "int" (#int "42") 42
+check "float" (#float "3.14") 3.14
+check "str" (#str 42) "42"
+check "num safe" (#num "abc") null
+check "num valid" (#num "99") 99
+check "bool truthy" (#bool 1) true
+check "bool falsy" (#bool 0) false
+
+## ────────────────────────────────────────
+>> "\n--- RANGE ---"
+## ────────────────────────────────────────
+
+check "range up" (#range 1 5) [1, 2, 3, 4, 5]
+check "range down" (#range 5 1) [5, 4, 3, 2, 1]
+check "range single" (#range 3 3) [3]
+
+## ────────────────────────────────────────
+>> "\n--- BASE64 ---"
+## ────────────────────────────────────────
+
+$encoded -> #base64 "hello world"
+check "base64 encode" $encoded "aGVsbG8gd29ybGQ="
+$decoded -> #decode64 $encoded
+check "base64 decode" $decoded "hello world"
+
+## ────────────────────────────────────────
+>> "\n--- HEX CIPHER ---"
+## ────────────────────────────────────────
+
+$secret -> "top secret data 12345!@#$%"
+$pass -> "mykey"
+$enc -> #encrypt $secret $pass
+$dec -> #decrypt $enc $pass
+check "encrypt/decrypt" $dec $secret
+
+## Different output each time (random salt)
+$enc2 -> #encrypt "test" "key"
+$enc3 -> #encrypt "test" "key"
+check "random salt" ($enc2 != $enc3) true
+
+## ────────────────────────────────────────
+>> "\n--- JSON ---"
+## ────────────────────────────────────────
+
+$obj -> #json '{"name":"Niko","age":17,"active":true,"scores":[90,85,95]}'
+check "json name" $obj["name"] "Niko"
+check "json age" $obj["age"] 17
+check "json bool" $obj["active"] true
+check "json array" $obj["scores"][0] 90
+check "json nested len" #len $obj["scores"] 3
+
+$back -> #jsonc $obj
+check "json has name" (#test $back "Niko") true
+
+## ────────────────────────────────────────
+>> "\n--- REGEX ---"
+## ────────────────────────────────────────
+
+$m -> #match "hello world" "[a-z]+"
+check "regex match" $m[0] "hello"
+
+$all -> #matchall "a1 b2 c3" "[a-z]\\d"
+check "regex matchall" #len $all 3
+
+$cleaned -> #replacex "a  b   c" "\\s+" " "
+check "regex replace" $cleaned "a b c"
+
+check "regex test true" (#test "abc123" "^[a-z]+\\d+$") true
+check "regex test false" (#test "ABC" "^[a-z]+$") false
+
+## ────────────────────────────────────────
+>> "\n--- ERROR HANDLING ---"
+## ────────────────────────────────────────
+
+## Basic try/catch
+$caught -> false
+#try ::
+    $x -> 10 / 0
+#catch ::
+    $caught -> true
+;;
+check "try/catch basic" $caught true
+
+## Typed catch
+$caught_type -> ""
+#try ::
+    $x -> 10 / 0
+#catch ZeroDivisionError ::
+    $caught_type -> "zero"
+;;
+check "typed catch" $caught_type "zero"
+
+## Finally
+$finally_ran -> false
+#try ::
+    $x -> 10 / 0
+#catch ::
+    $caught -> true
+#finally ::
+    $finally_ran -> true
+;;
+check "finally" $finally_ran true
+
+## ────────────────────────────────────────
+>> "\n--- FILES ---"
+## ────────────────────────────────────────
+
+~write "__test_deep.txt" "line1"
+~append "__test_deep.txt" "line2"
+$content -> ~read "__test_deep.txt"
+check "file write+read" (#test $content "line1") true
+check "file exists" (~exists "__test_deep.txt") true
+~del "__test_deep.txt"
+check "file delete" (~exists "__test_deep.txt") false
+
+## ────────────────────────────────────────
+>> "\n--- MULTI-LINE STRINGS ---"
+## ────────────────────────────────────────
+
+$ml -> """hello
+world"""
+check "multiline has newline" (#test $ml "\\n") true
+
+## ────────────────────────────────────────
+>> "\n--- DATE/TIME ---"
+## ────────────────────────────────────────
+
+$d -> #date
+check "date format" (#test $d "^\\d{4}-\\d{2}-\\d{2}$") true
+
+$c -> #clock
+check "clock format" (#test $c "^\\d{2}:\\d{2}:\\d{2}$") true
+
+$t -> #time
+check "time is number" #isnum $t true
+
+## ────────────────────────────────────────
+>> "\n--- SHELL ---"
+## ────────────────────────────────────────
+
+$user -> ! "whoami"
+check "shell not empty" (#len $user > 0) true
+
+## ────────────────────────────────────────
+>> "\n--- COMPLEX SCENARIOS ---"
+## ────────────────────────────────────────
+
+## Nested list operations
+$matrix -> [[1, 2], [3, 4], [5, 6]]
+$sum -> 0
+for $row in $matrix ::
+    for $val in $row ::
+        $sum += $val
+    ;;
+;;
+check "nested for" $sum 21
+
+## Function returning list + destructuring
+get_pair ::
+    => [42, 99]
+;;
+[$a, $b] -> get_pair
+check "func+destructure a" $a 42
+check "func+destructure b" $b 99
+
+## Map as config
+$config -> #json '{"debug": true, "port": 8080, "name": "hexserver"}'
+check "json config" $config["port"] 8080
+
+## Chained string ops
+$s -> "  Hello, World!  "
+&trim $s
+&lower $s
+&replace $s "," ""
+&replace $s "!" ""
+check "chained string" $s "hello world"
+
+## ════════════════════════════════════════
+>> "\n=========================================="
+>> bold "  RESULTS"
+>> "=========================================="
+>> green "  Passed: {$passed}"
+? $failed > 0 ::
+    >> red "  Failed: {$failed}"
+:: else ::
+    >> green "  Failed: 0"
+;;
+>> "  Total:  " + ($passed + $failed)
+>> "=========================================="
+? $failed == 0 ::
+    >> green "  ALL TESTS PASSED"
+:: else ::
+    >> red "  SOME TESTS FAILED"
+;;
+>> "=========================================="
