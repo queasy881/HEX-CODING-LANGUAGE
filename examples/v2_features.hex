@@ -1,0 +1,150 @@
+## Test all v2 features
+
+>> "=== COMPOUND ASSIGNMENT ==="
+$x -> 10
+$x += 5
+>> "10 += 5 = {$x}"
+$x -= 3
+>> "-= 3 = {$x}"
+$x *= 2
+>> "*= 2 = {$x}"
+$x /= 4
+>> "/= 4 = {$x}"
+
+>> "\n=== TERNARY ==="
+$age -> 17
+$status -> ($age >= 18 ? "adult" : "minor")
+>> "age {$age} = {$status}"
+$max -> (5 > 3 ? 5 : 3)
+>> "max(5,3) = {$max}"
+
+>> "\n=== PRINT NO NEWLINE ==="
+>>> "loading"
+>>> "."
+>>> "."
+>>> "."
+>> " done!"
+
+>> "\n=== MULTI-LINE STRINGS ==="
+$poem -> """this is
+a multi-line
+string in HEX"""
+>> $poem
+
+>> "\n=== CONSTANTS ==="
+lock $PI -> 3.14159
+>> "PI = {$PI}"
+#try ::
+    $PI -> 999
+#catch ::
+    >> green "constant protection works!"
+;;
+
+>> "\n=== MATCH/SWITCH ==="
+$day -> "tuesday"
+match $day ::
+    case "monday" ::
+        >> "start of week"
+    ;;
+    case "tuesday" ::
+        >> "taco tuesday!"
+    ;;
+    case "friday" ::
+        >> "TGIF"
+    ;;
+    default ::
+        >> "just another day"
+    ;;
+;;
+
+>> "\n=== FOREVER LOOP (with break) ==="
+$count -> 0
+forever ::
+    $count += 1
+    ? $count >= 3 ::
+        break
+    ;;
+;;
+>> "forever ran {$count} times"
+
+>> "\n=== DO-WHILE ==="
+$n -> 5
+do ::
+    >> "do-while: {$n}"
+    $n -= 1
+;; while $n > 3
+
+>> "\n=== DESTRUCTURING ==="
+$data -> [10, 20, 30]
+[$a, $b, $c] -> $data
+>> "destructured: {$a}, {$b}, {$c}"
+
+[$x, $y] -> [100, 200]
+>> "direct: {$x}, {$y}"
+
+>> "\n=== MAP/FILTER/REDUCE ==="
+double $x ::
+    => $x * 2
+;;
+$nums -> [1, 2, 3, 4, 5]
+&map $nums double
+>> "mapped *2: {$nums}"
+
+is_even $x ::
+    => $x % 2 == 0
+;;
+$nums -> [1, 2, 3, 4, 5, 6, 7, 8]
+&filter $nums is_even
+>> "filtered even: {$nums}"
+
+add_up $a $b ::
+    => $a + $b
+;;
+$vals -> [1, 2, 3, 4, 5]
+&reduce $vals add_up
+>> "reduced sum: {$vals}"
+
+>> "\n=== ZIP / ENUMERATE ==="
+$names -> ["alice", "bob", "charlie"]
+$scores -> [95, 87, 92]
+&zip $names $scores
+>> "zipped: {$names}"
+
+$items -> ["a", "b", "c"]
+&enumerate $items
+>> "enumerated: {$items}"
+
+>> "\n=== ANY / ALL ==="
+$vals -> [0, 0, 1, 0]
+&any $vals
+$vals -> [1, 1, 1, 1]
+&all $vals
+
+>> "\n=== RANGE ==="
+$r -> #range 1 5
+>> "range 1..5: {$r}"
+$r -> #range 5 1
+>> "range 5..1: {$r}"
+
+>> "\n=== CLASSES ==="
+class Animal ::
+    $type -> "unknown"
+
+    init $name $sound ::
+        $this["name"] -> $name
+        $this["sound"] -> $sound
+    ;;
+
+    speak ::
+        >> $this["name"] + " says " + $this["sound"]
+    ;;
+;;
+
+$dog -> new Animal "Rex" "woof"
+>> "Dog name: " + $dog["name"]
+$dog.speak
+
+$cat -> new Animal "Whiskers" "meow"
+$cat.speak
+
+>> "\n=== ALL V2 FEATURES WORK ==="

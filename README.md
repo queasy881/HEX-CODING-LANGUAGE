@@ -446,6 +446,184 @@ Errors display Python-style tracebacks:
 
 ---
 
+## Compound Assignment
+
+```
+$x -> 10
+$x += 5      ## 15
+$x -= 3      ## 12
+$x *= 2      ## 24
+$x /= 4      ## 6
+```
+
+---
+
+## Ternary Expression
+
+```
+$result -> ($age >= 18 ? "adult" : "minor")
+$max -> ($a > $b ? $a : $b)
+```
+
+---
+
+## Print Without Newline
+
+```
+>>> "loading"
+>>> "."
+>>> "."
+>> " done!"     ## >> still adds newline
+```
+
+---
+
+## Multi-line Strings
+
+```
+$text -> """this is
+a multi-line
+string in HEX"""
+```
+
+---
+
+## Constants
+
+```
+lock $PI -> 3.14159     ## can never be reassigned
+$PI -> 999              ## RuntimeError: cannot reassign constant
+```
+
+---
+
+## Match / Switch
+
+```
+match $day ::
+    case "monday" ::
+        >> "start of week"
+    ;;
+    case "friday" ::
+        >> "TGIF"
+    ;;
+    default ::
+        >> "just another day"
+    ;;
+;;
+```
+
+---
+
+## Forever Loop
+
+```
+forever ::
+    >> "runs until break"
+    ? $done ::
+        break
+    ;;
+;;
+```
+
+---
+
+## Do-While Loop
+
+```
+do ::
+    >> "runs at least once"
+    $n -= 1
+;; while $n > 0
+```
+
+---
+
+## Import
+
+```
+import "utils.hex"       ## runs another .hex file in current scope
+```
+
+---
+
+## Destructuring
+
+```
+[$a, $b, $c] -> [10, 20, 30]
+>> $a    ## 10
+>> $b    ## 20
+
+[$x, $y] -> $some_list
+```
+
+---
+
+## Classes
+
+```
+class Animal ::
+    init $name $sound ::
+        $this["name"] -> $name
+        $this["sound"] -> $sound
+    ;;
+
+    speak ::
+        >> $this["name"] + " says " + $this["sound"]
+    ;;
+;;
+
+$dog -> new Animal "Rex" "woof"
+$dog.speak                      ## Rex says woof
+>> $dog["name"]                 ## Rex
+```
+
+---
+
+## Lambda
+
+```
+$double -> fn $x => $x * 2
+```
+
+---
+
+## Map / Filter / Reduce
+
+```
+double $x ::
+    => $x * 2
+;;
+$nums -> [1, 2, 3, 4, 5]
+&map $nums double               ## [2, 4, 6, 8, 10]
+
+is_even $x ::
+    => $x % 2 == 0
+;;
+&filter $nums is_even            ## [4, 8]
+
+add $a $b ::
+    => $a + $b
+;;
+&reduce $nums add                ## single value
+
+&any $list                       ## true if any truthy
+&all $list                       ## true if all truthy
+&zip $list1 $list2               ## [[a1,b1], [a2,b2], ...]
+&enumerate $list                 ## [[0,a], [1,b], ...]
+```
+
+---
+
+## Range
+
+```
+$r -> #range 1 10               ## [1, 2, 3, ..., 10]
+$r -> #range 10 1               ## [10, 9, 8, ..., 1]
+```
+
+---
+
 ## Examples
 
 See the `examples/` folder:
@@ -457,6 +635,8 @@ See the `examples/` folder:
 - `errors.hex` — error system demo
 - `new_features.hex` — all string/list/map/math builtins
 - `network_crypto.hex` — HTTP requests, base64, encryption
+- `crypto_test.hex` — custom HEX cipher demo
+- `v2_features.hex` — compound assignment, ternary, match, classes, destructuring, map/filter/reduce
 
 ---
 
