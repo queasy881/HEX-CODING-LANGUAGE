@@ -223,6 +223,14 @@ $nums -> [1, 2, 3, 4, 5]
 &find $nums 99           ## print index of value (-1 if not found)
 &contains $nums 99       ## print true/false
 &count $nums 3           ## print how many times value appears
+&clear $nums             ## empty the list
+&extend $nums [6, 7, 8]  ## append all items from another list
+&remove $nums 3          ## remove first occurrence by VALUE (not index)
+&copy $src $dst          ## shallow copy to new variable
+
+## Operators
+$combined -> [1, 2] + [3, 4]    ## [1, 2, 3, 4] — concatenation
+$repeated -> [0] * 5            ## [0, 0, 0, 0, 0] — repetition
 ```
 
 ---
@@ -256,6 +264,10 @@ $msg -> "hello world"
 &partition $msg "-"      ## split into [before, sep, after]
 &ljust $msg 20           ## left justify (pad right with spaces)
 &rjust $msg 20           ## right justify (pad left with spaces)
+&splitlines $msg         ## split by newlines into list
+&removeprefix $msg "he"  ## remove prefix: "llo world"
+&removesuffix $msg "ld"  ## remove suffix: "hello wor"
+&rfind $msg "l"          ## last position of substring
 
 >> $msg[0]               ## first char
 >> $msg[0:5]             ## slice
@@ -273,9 +285,15 @@ $person["age"] -> 18
 
 &keys $person            ## turns into list of keys
 &vals $person            ## turns into list of values
+&items $person           ## turns into list of [key, value] pairs
 &del $person "age"       ## delete a key
 &haskey $person "name"   ## true/false
 &merge $map1 $map2       ## merge map2 into map1
+&update $map $other      ## merge (alias for merge)
+&get $map "key" "default" ## safe access — prints value or default
+&setdefault $map "k" 0   ## set value only if key missing
+&fromkeys $map ["a","b"] 0 ## create map from key list with default value
+&clear $map              ## empty the map
 ```
 
 ---
@@ -373,6 +391,15 @@ $x -> #bool $val         ## truthy check
 #tan 0                   ## 0
 #sign -5                 ## -1
 #rand 1 100              ## random number
+#factorial 7             ## 5040
+#gcd 12 8               ## 4
+#lcm 4 6                ## 12
+#isnan $x                ## true if NaN
+#isinf $x                ## true if infinity
+#radians 180             ## convert degrees to radians
+#degrees 3.14            ## convert radians to degrees
+#hypot 3 4              ## 5 (hypotenuse)
+#atan2 1 1              ## arctangent of y/x
 ```
 
 ### Character / Number Formats
@@ -391,11 +418,50 @@ $x -> #bool $val         ## truthy check
 #inf                     ## infinity
 ```
 
+### Random
+```
+#rand 1 100              ## random int in range
+#choice $list            ## random pick from list
+#sample $list 3          ## random 3 items (no replacement)
+#seed 42                 ## seed the RNG
+#uniform 0.0 1.0         ## random float in range
+```
+
+### Statistics
+```
+#mean $list              ## average
+#median $list            ## middle value
+#mode $list              ## most common value
+#stdev $list             ## standard deviation
+#variance $list          ## variance
+```
+
 ### Non-mutating List Operations
 ```
 $sorted -> #sorted $list     ## returns new sorted list (original unchanged)
 $rev -> #reversed $list      ## returns new reversed list
 $unique -> #set $list        ## returns list with duplicates removed
+$copy -> #copy $list         ## shallow copy
+$deep -> #deepcopy $list     ## deep copy (nested structures)
+```
+
+### Combinatorics
+```
+#combinations $list 2        ## all combinations of 2 items
+#permutations $list          ## all permutations
+#product $list1 $list2       ## cartesian product
+```
+
+### Utilities
+```
+#uuid                        ## generate random UUID
+#hash "text"                 ## hash string (FNV-1a hex)
+#counter "abracadabra"       ## count chars: {"a": 5, "b": 2, ...}
+#counter $list               ## count items in list
+#eval ">> 1 + 1"             ## evaluate HEX code string
+#glob "*.txt"                ## find files matching pattern
+#tempfile                    ## create temp file, return path
+#sleep 2.5                   ## sleep in seconds (not ms)
 ```
 
 ### System
@@ -887,6 +953,7 @@ See the `examples/` folder:
 - `v3_features.hex` — JSON, regex, enums, inheritance, error handling v2
 - `file_ops.hex` — all file/directory operations
 - `v4_features.hex` — in operator, chr/ord, hex/bin, argv, env, sorted, set, pass, del, raise
+- `v5_features.hex` — list/string operators, random, statistics, uuid, hash, combinatorics, file utils
 
 ---
 
@@ -899,3 +966,10 @@ See the `examples/` folder:
 | Encryption | `pip install cryptography` | `#encrypt "msg" "pass"` built-in |
 | String interpolation | `f"hello {name}"` (needs f prefix) | `"hello {$name}"` (always works) |
 | Base64 | `import base64` (verbose) | `#base64 "text"` one-liner |
+| UUID | `import uuid` | `#uuid` one-liner |
+| Statistics | `import statistics` | `#mean`, `#median`, `#stdev` built-in |
+| Combinatorics | `import itertools` | `#combinations`, `#permutations` built-in |
+| Glob | `import glob` | `#glob "*.txt"` built-in |
+| Temp files | `import tempfile` | `#tempfile` built-in |
+| Counter | `from collections import Counter` | `#counter` built-in |
+| Deep copy | `import copy` | `#deepcopy` built-in |
